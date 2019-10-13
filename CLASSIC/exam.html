@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+<!-- Basic Page Needs
+        ================================================== -->
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="icon" type="image/png" href="../images/favicon.png">
+<title>Gatehouse Exam</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<!-- Mobile Specific Metas
+        ================================================== -->
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Template CSS Files
+        ================================================== -->
+<!-- Twitter Bootstrs CSS -->
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+<!-- Ionicons Fonts Css -->
+<!-- animate css -->
+<link rel="stylesheet" href="../css/animate.css">
+<!-- Hero area slider css-->
+<link rel="stylesheet" href="../css/slider.css">
+<!-- owl craousel css -->
+<link rel="stylesheet" href="../css/owl.carousel.css">
+<link rel="stylesheet" href="../css/owl.theme.css">
+<link rel="stylesheet" href="../css/jquery.fancybox.css">
+<!-- template main css file -->
+<link rel="stylesheet" href="../css/main.css">
+<!-- responsive css -->
+<link rel="stylesheet" href="../css/responsive.css">
+
+<!-- Template Javascript Files
+        ================================================== -->
+       
+<script src="../js/jquery.min.js"></script>
+<script src="../js/jquery.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/bootstrap.js"></script>
+<script type="text/javascript">
+            if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
++function ($) {
+  'use strict';
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1) || (version[0] > 2)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher, but lower than version 3')
+  }
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.6
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.6'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script> 
+<!-- modernizr js -->
+<!-- <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        jquery
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        owl carouserl js
+        <script src="js/owl.carousel.min.js"></script>
+        bootstrap js
+
+        <script src="js/bootstrap.min.js"></script>
+        wow js
+        <script src="js/wow.min.js"></script>
+        slider js
+        <script src="js/slider.js"></script>
+        <script src="js/jquery.fancybox.js"></script>
+        template main js
+        <script src="js/main.js"></script> -->
+</head>
+<style>
+
+#top-bar #main-menu li a:hover {
+  color: #079446;
+}
+#top-bar #main-menu li a.activ {
+  color: #079446!important;
+}
+
+ 
+
+</style>
+<body>
+	<!--
+        ==================================================
+        Header Section Start
+        ================================================== -->
+	<header id="top-bar" class="navbar-fixed-top animated-header">
+        <!--<nav class="navbar-collapse " role="navigation"
+            style="margin-top: 0px; margin-bottom: 0px;">
+
+            <div class="container" id="nav-container">
+                <div id="languagePanel">
+                    img alt="Italy flag" src="../images/flags/italy-18.png">
+                    <a href="index-eng.php"><img alt="English flag" src="images/flags/uk-18.png"></a>
+                </div>
+            </div>
+        </nav> -->
+        <nav class="navbar-collapse " role="navigation"
+            style="margin-top: 0px; margin-bottom: 0px;">
+
+            <div class="container" id="nav-container">
+                <div id="languagePanel">
+                    <!-- img alt="Italy flag" src="../images/flags/italy-18.png"> -->
+                    <a href="English/exam.html"><img alt="English flag" src="../images/flags/uk-18.png"></a>
+                </div>
+                <!-- main menu -->
+
+                <div class="navbar-header">
+                    <!-- responsive nav button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#main-menu">
+                        <span class="sr-only">Toggle navigation</span> <span
+                            class="icon-bar"></span> <span class="icon-bar"></span> <span
+                            class="icon-bar"></span>
+                    </button>
+                    <!-- /responsive nav button -->
+
+                    <!-- logo -->
+                    <div class="navbar-brand">
+                        <a href="../index.php"> <img src="../images/gatehouse-logo.png"
+                            alt="gatehouse logo" style="height: 84px;">
+                        </a> 
+                    </div>
+                    <!-- /logo -->
+                </div>
+
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- <li><a href="index.php" class="activ">Home</a></li> -->
+                        <li class="nav-item dropdown">
+                            
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >Exam <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a  href="exam.html" class="dropdown-item"><span style="text-transform: none;"> Classic</span></a></li>
+                                <li><a href="../exam.html" class="dropdown-item"><span style="text-transform: none;"> Tie </span></a></li>
+                                <li><a href="../cadets exam.html" class="dropdown-item" ><span style="text-transform: none;"> Cadets<span></a></li>
+                                </ul>
+
+                            </li>
+                        <li><a href="../support.html">Support</a></li>
+                        <!-- <li><a href="price_list.html">Price List</a></li> -->
+                        
+                        <li><a href="../centri_desame.html" >Centri d'esame</a></li>
+                        <li><a href="../centre_support.html">Centre Support</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- /main nav -->
+            </div>
+        </nav>
+    </header>
+
+	<!-- 
+        ================================================== 
+            Global Page Section Start
+        ================================================== -->
+	<section class="global-page-header" style="background-color: #079446">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="block">
+						<h2>CLASSIC EXAM</h2>
+						<ol class="breadcrumb">
+							<li><a href="../index.php"> <i class="ion-ios-home"></i>
+									Home
+							</a></li>
+							<li class="active">Exam</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--/#Page header-->
+
+
+	<!-- 
+        ================================================== 
+            Works Section Start
+        ================================================== -->
+	<section class="works service-page">
+		<div class="container">
+			<!--                <h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">Some Of Our Features Works</h2>-->
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+				data-wow-duration="500ms">Le certificazioni GATEHOUSE CLASSIC
+				ESOL International sono pensate per i candidati che non sono
+				madrelingua inglese e che desiderano ottenere una certificazione in
+				inglese come seconda lingua (L2) di alta qualità, disponibile e
+				riconosciuta in tutto il mondo. Sono progettate per fare riferimento
+				alle descrizioni delle competenze linguistiche nel Quadro comune
+				europeo di riferimento per le lingue (QCER). La certificazione è
+				regolata dall&#39;Office of Qualifications and Examinations
+				Regulations (Ofqual) in Inghilterra e fa parte del Regulated
+				Qualifications Framework (RQF).</p>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+				data-wow-duration="500ms">La qualifica è disponibile a tutti i livelli del QCER: per tutti i livelli, l'esame consiste di quattro componenti separati, ognuno dei quali valuta una delle quattro abilità: Ascolto, Parlato, Lettura e Scrittura.</p>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+				data-wow-duration="500ms">La qualifica è stata progettata per
+				riflettere i quattro domini specificati dal QCER: il dominio
+				pubblico, il dominio personale, il dominio educativo e il dominio
+				professionale. Tutte le attività di valutazione utilizzano contesti
+				familiari e di routine a cui gli studenti hanno familiarità. Le
+				valutazioni sono tramite materiali scritti e impostati da Gatehouse
+				Awards. La qualifica è disponibile su richiesta.</p>
+
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+				data-wow-duration="500ms" style="margin-bottom: 50px;">
+				Di seguito i link agli exam overviews e sample tests, nonché
+				l’elenco dei compiti del test orale da preparare. <b>Per altri
+					documenti pertinenti, visita la pagina SUPPORTO.</b>
+			</p>
+
+			<!-- ============================================================================ 
+				                         Exam preparation
+				        ================================================== -->
+			<h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s"
+				data-wow-duration="500ms">GENERAL INFORMATION AND GUIDELINES</h2>	        
+			<div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="../images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a href="docs/GA Classic General Guidelines.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Classic General Guidelines.pdf" target="_blank">
+                                        GA Classic General Guidelines  
+                                    </a> 
+                                </h4><br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="../images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Classic Delivery Requirements.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/GA Classic Delivery Requirements.pdf" target="_blank">
+                                       GA Classic Delivery Requirements       
+                                    </a>
+                                </h4><br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="../images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Classic Qualification Specification.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/GA Classic Qualification Specification.pdf" target="_blank">
+                                        GA Classic Qualification Specification      
+                                    </a>
+                                </h4><br>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="../images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/The-Classic-IESOL-Prepared-Speaking-Tasks-A1-C2-Jan-June-2018.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/The-Classic-IESOL-Prepared-Speaking-Tasks-A1-C2-Jan-June-2018.pdf" target="_blank">
+                                        GA Classic Prepared Speaking Tasks Jan-Jun 2018       
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="../images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/The-Classic-IESOL-Prepared-Speaking-Tasks-A1-C2-July-Dec-2019.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/The-Classic-IESOL-Prepared-Speaking-Tasks-A1-C2-July-Dec-2019.pdf" target="_blank">
+                                        The Classic IESOL Prepared Speaking Tasks (A1 - C2) July - Dec 2019       
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>	
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="../images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/The Classic IESOL Prepared Speaking Tasks (A1 - C2) Jan - June 2020.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/The Classic IESOL Prepared Speaking Tasks (A1 - C2) Jan - June 2020.pdf" target="_blank">
+                                        The Classic IESOL Prepared Speaking Tasks (A1 - C2) Jan - June 2020       
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>	
+
+                </div>	        
+			<h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s"
+				data-wow-duration="500ms">SYLLABI & EXAM SPECIFICATIONS</h2>
+
+			<div class="row">
+
+				<div class="col-sm-3"  >
+					<figure class="wow fadeInLeft animated  " data-wow-duration="500ms"
+						data-wow-delay="0ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+
+									<a target="_blank"
+										href="docs/Examination Specification A1.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/Examination Specification A1.pdf">
+									CEFR A1 Syllabus & Examination Specification </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="300ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/Examination Specification A2.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/Examination Specification A2.pdf">
+									CEFR A2 Syllabus & Examination Specification </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="300ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/Examination Specification B1.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/Examination Specification B1.pdf">
+									CEFR B1 Syllabus & Examination Specification </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/Examination Specification B2.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/Examination Specification B2.pdf">
+									CEFR B2 Syllabus & Examination Specification </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+
+
+			
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated  " data-wow-duration="500ms"
+						data-wow-delay="0ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+
+									<a target="_blank"
+										href="docs/Examination Specification C1.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/Examination Specification C1.pdf">
+									CEFR C1 Syllabus & Examination Specification </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="300ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/Examination Specification C2.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/Examination Specification C2.pdf">
+									CEFR C2 Syllabus & Examination Specification </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				</div>
+
+			
+
+				
+
+
+
+			<h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s"
+				data-wow-duration="500ms">EXAM SAMPLES</h2>
+			
+				<div class="row">
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="300ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank" href="docs/A1 Sample 1.zip">
+										Download </a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank" href="docs/A1 Sample 1.zip">
+									CEFR A1 Sample 1 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/A2 Sample 1.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/A2 Sample 1.zip">
+									CEFR A2 Sample 1 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/B1 Sample 1.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/B1 Sample 1.zip">
+									CEFR B1 Sample 1 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/B2 Sample 1.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/B2 Sample 1.zip">
+									CEFR B2 Sample 1 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/B2 Sample 2.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/B2 Sample 2.zip">
+									CEFR B2 Sample 2 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/B2 Sample 3.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/B2 Sample 3.zip">
+									CEFR B2 Sample 3 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+
+
+			
+			
+
+
+				
+ 
+				
+				
+				
+								<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/C1 Sample 1.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/C1 Sample 1.zip">
+									CEFR C1 Sample 1 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+				
+				<div class="col-sm-3" >
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/C2 Sample 1.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/C2 Sample 1.zip">
+									CEFR C2 Sample 1 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/C2 Sample 2.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/C2 Sample 2.zip">
+									CEFR C2 Sample 2 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+					<figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="600ms">
+						<div class="img-wrapper">
+							<img src="../images/icons/zip.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank"
+										href="docs/C2 Sample 3.zip">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a target="_blank"
+									href="docs/C2 Sample 3.zip">
+									CEFR C2 Sample 3 </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div>
+
+
+			
+
+
+		</div>
+        
+	</section>
+	<!-- 
+        ================================================== 
+            Clients Section Start
+        ================================================== 
+        <section id="clients">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="subtitle text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".3s">Our Happy Clinets</h2>
+                        <p class="subtitle-des text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".5s">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, error.</p>
+                        <div id="clients-logo" class="owl-carousel">
+                            <div>
+                                <img src="../images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-5.jpg" alt="">
+                            </div>
+                             <div>
+                                <img src="../images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="../images/clients/logo-5.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+
+
+
+
+	<!-- 
+        ================================================== 
+            Call To Action Section Start
+        ================================================== -->
+	<section id="call-to-action" style="background-color: #079446">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="block">
+						<!--
+                            <h2 class="title wow fadeInDown" data-wow-delay=".3s"   data-wow-duration="500ms">SO WHAT YOU THINK ?</h1>
+                            <p class="wow fadeInDown" data-wow-delay=".5s" data-wow-duration="500ms">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis,<br>possimus commodi, fugiat magnam temporibus vero magni recusandae? Dolore, maxime praesentium.</p>
+                            <a href="contact.html" class="btn btn-default btn-contact wow fadeInDown" data-wow-delay=".7s" data-wow-duration="500ms">Contact With Me</a>
+-->
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+
+
+	<!-- 
+        ================================================== 
+            Footer Section Start
+        ================================================== -->
+	<footer id="footer">
+		<div class="container">
+			<div class="col-md-8">
+				<p class="copyright">
+					Copyright: <span>2016</span>
+				</p>
+			</div>
+			<div class="col-md-4">
+				<!-- Social Media -->
+				<!--
+                    <ul class="social">
+                        <li>
+                            <a href="#" class="Facebook">
+                                <i class="ion-social-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Twitter">
+                                <i class="ion-social-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Linkedin">
+                                <i class="ion-social-linkedin"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Google Plus">
+                                <i class="ion-social-googleplus"></i>
+                            </a>
+                        </li>
+                        
+                    </ul>
+-->
+			</div>
+		</div>
+	</footer>
+	<!-- /#footer -->
+</body>
+</html>

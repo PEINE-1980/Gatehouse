@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <!-- Basic Page Needs
+        ================================================== -->
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+        <title>Centre Support</title>
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="">
+        <!-- Mobile Specific Metas
+        ================================================== -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Template CSS Files
+        ================================================== -->
+        <!-- Twitter Bootstrs CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <!-- Ionicons Fonts Css -->
+        <link rel="stylesheet" href="css/ionicons.min.css">
+        <!-- animate css -->
+        <link rel="stylesheet" href="css/animate.css">
+        <!-- Hero area slider css-->
+        <link rel="stylesheet" href="css/slider.css">
+        <!-- owl craousel css -->
+        <link rel="stylesheet" href="css/owl.carousel.css">
+        <link rel="stylesheet" href="css/owl.theme.css">
+        <link rel="stylesheet" href="css/jquery.fancybox.css">
+        <!-- template main css file -->
+        <link rel="stylesheet" href="css/main.css">
+        <!-- responsive css -->
+        <link rel="stylesheet" href="css/responsive.css">
+        
+        <!-- Template Javascript Files
+        ================================================== -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script type="text/javascript">
+            if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
++function ($) {
+  'use strict';
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1) || (version[0] > 2)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher, but lower than version 3')
+  }
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.6
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.6'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script> 
+    </head>
+    <style>
+    @media (min-width:768px){.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9{float:left}.col-sm-12{width:100%}.col-sm-11{width:91.66666667%}.col-sm-10{width:83.33333333%}.col-sm-9{width:75%}.col-sm-8{width:66.66666667%}.col-sm-7{width:58.33333333%}.col-sm-6{width:50%}.col-sm-5{width:41.66666667%}.col-sm-4{width:33.33333333%}.col-sm-3{width:25%}.col-sm-2{width:16.66666667%}.col-sm-1{width:8.33333333%}.col-sm-pull-12{right:100%}.col-sm-pull-11{right:91.66666667%}.col-sm-pull-10{right:83.33333333%}.col-sm-pull-9{right:75%}.col-sm-pull-8{right:66.66666667%}.col-sm-pull-7{right:58.33333333%}.col-sm-pull-6{right:50%}.col-sm-pull-5{right:41.66666667%}.col-sm-pull-4{right:33.33333333%}.col-sm-pull-3{right:25%}.col-sm-pull-2{right:16.66666667%}.col-sm-pull-1{right:8.33333333%}.col-sm-pull-0{right:auto}.col-sm-push-12{left:100%}.col-sm-push-11{left:91.66666667%}.col-sm-push-10{left:83.33333333%}.col-sm-push-9{left:75%}.col-sm-push-8{left:66.66666667%}.col-sm-push-7{left:58.33333333%}.col-sm-push-6{left:50%}.col-sm-push-5{left:41.66666667%}.col-sm-push-4{left:33.33333333%}.col-sm-push-3{left:25%}.col-sm-push-2{left:16.66666667%}.col-sm-push-1{left:8.33333333%}.col-sm-push-0{left:auto}.col-sm-offset-12{margin-left:100%}.col-sm-offset-11{margin-left:91.66666667%}.col-sm-offset-10{margin-left:83.33333333%}.col-sm-offset-9{margin-left:75%}.col-sm-offset-8{margin-left:66.66666667%}.col-sm-offset-7{margin-left:58.33333333%}.col-sm-offset-6{margin-left:50%}.col-sm-offset-5{margin-left:41.66666667%}.col-sm-offset-4{margin-left:33.33333333%}.col-sm-offset-3{margin-left:25%}.col-sm-offset-2{margin-left:16.66666667%}.col-sm-offset-1{margin-left:8.33333333%}.col-sm-offset-0{margin-left:0}}
+.nav-tabs>li>a,.nav-tabs>li>a:focus,.nav-tabs>li>a:active,.nav-tabs>li>a:hover 
+{
+background-color: inherit;
+}
+  .nav-tabs.nav-justified > li > a{
+    border: none;
+    background-color: inherit;
+    
+  }
+
+  
+
+  .nav-tabs.nav-justified > .active > a, .nav-tabs.nav-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:hover
+  {
+    border: none;
+    background-color: inherit;
+    
+  }
+  .nav-tabs>li>a,.nav-tabs>li>a:focus> img,.nav-tabs>li>a:hover> img,.nav-tabs>li>a:active> img
+{
+background-color: inherit;
+border: 0;
+-webkit-filter: none;
+outline: none;
+
+
+}
+.nav-tabs> .active> a>img {
+background-color: inherit;
+border: 0;
+-webkit-filter: none;
+outline: none;
+}
+
+</style>
+    <body>
+        <!--
+        ==================================================
+        Header Section Start
+        ================================================== -->
+        <header id="top-bar" class="navbar-fixed-top animated-header">
+        <!--<nav class="navbar-collapse " role="navigation"
+            style="margin-top: 0px; margin-bottom: 0px;">
+
+            <div class="container" id="nav-container">
+                <div id="languagePanel">
+                    img alt="Italy flag" src="../images/flags/italy-18.png">
+                    <a href="index-eng.php"><img alt="English flag" src="images/flags/uk-18.png"></a>
+                </div>
+            </div>
+        </nav> -->
+        <nav class="navbar-collapse " role="navigation"
+            style="margin-top: 0px; margin-bottom: 0px;">
+
+            <div class="container" id="nav-container">
+                <div id="languagePanel">
+                    <!-- img alt="Italy flag" src="../images/flags/italy-18.png"> -->
+                    <a href="English/centre_support.html"><img alt="English flag" src="images/flags/uk-18.png"></a>
+                </div>
+                <!-- main menu -->
+
+                <div class="navbar-header">
+                    <!-- responsive nav button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#main-menu">
+                        <span class="sr-only">Toggle navigation</span> <span
+                            class="icon-bar"></span> <span class="icon-bar"></span> <span
+                            class="icon-bar"></span>
+                    </button>
+                    <!-- /responsive nav button -->
+
+                    <!-- logo -->
+                    <div class="navbar-brand">
+                        <a href="index.php"> <img src="images/gatehouse-logo.png"
+                            alt="gatehouse logo" style="height: 84px;">
+                        </a> 
+                    </div>
+                    <!-- /logo -->
+                </div>
+
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- <li><a href="index.php" class="activ">Home</a></li> -->
+                        <li class="nav-item dropdown">
+                            
+                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >Exam <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a  href="CLASSIC/exam.html" class="dropdown-item"><span style="text-transform: none;"> Classic</span></a></li>
+                                <li><a href="exam.html" class="dropdown-item"><span style="text-transform: none;"> Tie</span></a></li>
+                                <li><a href="cadets exam.html" class="dropdown-item"><span style="text-transform: none;"> Cadets</span></a></li>
+                                </ul>
+
+                            </li>
+                        <li><a href="support.html" class="active">Support</a></li>
+                        <!-- <li><a href="price_list.html">Price List</a></li> -->
+                        
+                        <li><a href="centri_desame.html" >Centri d'esame</a></li>
+                        <li><a href="#">Centre Support</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- /main nav -->
+            </div>
+        </nav>
+    </header>
+
+        <!-- 
+        ================================================== 
+            Global Page Section Start
+        ================================================== -->
+        <section class="global-page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="block">
+                            <h2>CENTRE SUPPORT</h2>
+                            <h4>Select the exam by clicking on the logo</h4>
+                            <ul class="nav nav-tabs nav-justified" >
+                                <li class="active">
+                                  
+                                  <a data-toggle="tab" href="#classic"> <img class="bwimg" src="images/Classic-Logo-Trans.png" style="max-width: 150px;">
+                                        
+                                        
+                                    </a>
+
+                                </li>
+                                <li> 
+                                    <a data-toggle="tab" href="#tie"> <img class="bwimg" src="images/TIE-LOGO.png" style="max-width: 150px;" ></a>
+                                        
+                                        
+                                    </a>
+                                </li>
+                                
+                                <li><a data-toggle="tab" href="#cadets" > <img class="bwimg" src="images/Cadets logo.png" style="max-width: 150px;"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+        </section><!--/#Page header-->
+
+
+      
+
+
+        <!-- 
+        ================================================== 
+            Works Section Start
+        ================================================== -->
+        <section  class="works service-page">
+          <div class="tab-content">
+            <div id="classic" class="container tab-pane fade in active">
+                <h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">CLASSIC EXAM REGISTRATION</h2>   
+                 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/word.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a href="CLASSIC/docs/GA Classic Examination Application Form.doc">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="CLASSIC/docs/GA Classic Examination Application Form.doc">
+                                        GA Classic Examination Application Form
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/excel.png" class="img-responsive" alt="excel icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/CandidatesExcelUpload.xlsx">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="CLASSIC/docs/CandidatesExcelUpload.xlsx">
+                                       GA Classic Candidate Spreadsheet       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="600ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/word.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/GA Classic Examination Timetable.docx">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="CLASSIC/docs/GA Classic Examination Timetable.docx">
+                                        GA Classic Examination Timetable    
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                   <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/GA Classic Examination Registration Procedures.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="CLASSIC/docs/GA Classic Examination Registration Procedures.pdf"  target="_blank">
+                                        GA Classic Examination Registration Procedures
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                </div>
+                
+                <div style="margin-bottom: 18px;">
+                    <h2 style="display: inline;" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">CLASSIC EXAM REGULATIONS AND GUIDANCE</h2>   
+                       
+                 
+                </div>
+              
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a href="CLASSIC/docs/GA Regulations for Conducting Controlled Examinations V2.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="CLASSIC/docs/GA Regulations for Conducting Controlled Examinations V2.pdf" target="_blank">
+                                        GA Regulations for Conducting Controlled Examination  
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/GA Candidate Access Policy and Procedure V5.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="CLASSIC/docs/GA Candidate Access Policy and Procedure V5.pdf" target="_blank">
+                                       GA Candidate Access Policy and Procedure       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/GA Malpractice and Maladministration Policy Procedure V8.4.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="CLASSIC/docs/GA Malpractice and Maladministration Policy Procedure V8.4.pdf" target="_blank">
+                                        GA Malpractice and Maladministration Policy and Procedure      
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/GA Centre Conflict of Interest Policy Procedure V5.3.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="CLASSIC/docs/GA Centre Conflict of Interest Policy Procedure V5.3.pdf" target="_blank">
+                                        Conflicts of interest policy      
+                                    </a>
+                                </h4><br>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>   
+
+                   
+
+                </div>
+                <h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">CLASSIC CENTRE APPROVAL</h2>
+                <div class="row">
+                  <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/zip.png" class="img-responsive" alt="zip icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="CLASSIC/docs/GA Centre Approval Forms.zip">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="CLASSIC/docs/GA Centre Approval Forms.zip">
+                                        Gatehouse Examination Center Approval Form       
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>  
+                </div>
+                
+            
+
+
+
+            </div>
+
+              <div id="tie" class="container tab-pane fade">
+
+            	 <h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">TIE EXAM REGISTRATION</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/word.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a target="_blank" href="docs/centre_support/Gatehouse TIE Examination Application Form.doc">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/Gatehouse TIE Examination Application Form.doc"  target="_blank">
+                                        Gatehouse TIE Examination Application Form
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/excel.png" class="img-responsive" alt="excel icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/Gatehouse TIE Examination Candidate Spreadsheet.xls">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/Gatehouse TIE Examination Candidate Spreadsheet.xls"  target="_blank">
+                                       Gatehouse TIE Examination Candidate Spreadsheet       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="600ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/word.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/Gatehouse TIE Examination Timetable.doc">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/Gatehouse TIE Examination Timetable.doc"  target="_blank">
+                                        Gatehouse TIE Examination Timetable    
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                   <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/TIE Examination Registration Procedures.pdf">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/TIE Examination Registration Procedures.pdf"  target="_blank">
+                                        TIE Examination registration procedures
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                </div>
+                
+                <div style="margin-bottom: 18px;">
+                	<h2 style="display: inline;" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">TIE EXAM REGULATIONS AND GUIDANCE</h2>   
+            	 	   
+            	 
+                </div>
+              
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a target="_blank" href="docs/centre_support/TIE A1-B1 Written Examination Guide V2.pdf">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/TIE A1-B1 Written Examination Guide V2.pdf"  target="_blank">
+                                        Gatehouse TIE A1-B1 Written Examination Guide  
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/TIE B2-C2 Written Examination Guide V2.pdf">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/TIE B2-C2 Written Examination Guide V2.pdf" target="_blank">
+                                       Gatehouse TIE B2-C2 Written Examination Guide       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/TIE Spoken Examination Guide V2.pdf"  target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/TIE Spoken Examination Guide V2.pdf" target="_blank">
+                                        Gatehouse TIE Spoken Examination Guide It      
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    
+
+                   
+
+                </div>
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a href="docs/GA Regulations for Conducting Controlled Examinations V2.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Regulations for Conducting Controlled Examinations V2.pdf" target="_blank">
+                                        GA Regulations for Conducting Controlled Examination  
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Candidate Access Policy and Procedure V5.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Candidate Access Policy and Procedure V5.pdf" target="_blank">
+                                       GA Candidate Access Policy and Procedure       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Malpractice and Maladministration Policy Procedure V8.4.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/GA Malpractice and Maladministration Policy Procedure V8.4.pdf" target="_blank">
+                                        GA Malpractice and Maladministration Policy and Procedure      
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Centre Conflict of Interest Policy Procedure V5.3.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Centre Conflict of Interest Policy Procedure V5.3.pdf" target="_blank">
+                                        Conflicts of interest policy      
+                                    </a>
+                                </h4><br>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>    
+                   
+
+                </div>
+
+
+
+                <div style="margin-bottom: 18px;">
+<h2 style="display: inline;" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">TIE CENTRE APPROVAL</h2> 
+                </div>
+<div class="row">
+<div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/zip.png" class="img-responsive" alt="zip icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/GA Centre Approval Forms.zip">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/GA Centre Approval Forms.zip"  target="_blank">
+                                        Gatehouse TIE Examination Center Approval Form       
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                   
+
+                </div>
+              </div>
+            
+                
+              <div id="cadets" class="container tab-pane fade">
+                <div style="margin-bottom: 18px;">
+                 <h2 id="cadets" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">CADETS EXAM REGISTRATION</h2>   
+                </div>
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/word.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a target="_blank" href="docs/centre_support/CADETS Examination Application Form.doc">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/CADETS Examination Application Form.doc"  target="_blank">
+                                        Cadets Examination Application Form
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/word.png" class="img-responsive" alt="word icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/GA Cadets Examination Timetable.docx">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/GA Cadets Examination Timetable.docx"  target="_blank">
+                                       GA Cadets Examination Timetable       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/excel.png" class="img-responsive" alt="excel icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/CandidatesExcelUpload.xlsx">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/CandidatesExcelUpload.xlsx"  target="_blank">
+                                       GA Cadets Candidate Spreadsheet       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/Cadets Exam Registration Procedures.pdf">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/Cadets Exam Registration Procedures.pdf"  target="_blank">
+                                       GA Cadets Exam Registration Procedures      
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                
+                </div>
+                 <div style="margin-bottom: 18px;">
+                    <h2 style="display: inline;" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">CADETS EXAM REGULATIONS AND GUIDANCE</h2>   
+                       
+                 
+                </div>
+              
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                             
+                                        <a href="docs/GA Regulations for Conducting Controlled Examinations V2.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Regulations for Conducting Controlled Examinations V2.pdf" target="_blank">
+                                        GA Regulations for Conducting Controlled Examination  
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Candidate Access Policy and Procedure V5.pdf" target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Candidate Access Policy and Procedure V5.pdf" target="_blank">
+                                       GA Candidate Access Policy and Procedure       
+                                    </a>
+                                </h4>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Malpractice and Maladministration Policy Procedure V8.4.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/GA Malpractice and Maladministration Policy Procedure V8.4.pdf" target="_blank">
+                                        GA Malpractice and Maladministration Policy and Procedure      
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/pdf.png" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a href="docs/GA Centre Conflict of Interest Policy Procedure V5.3.pdf" target="_blank" >Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4><br>
+                                    <a href="docs/GA Centre Conflict of Interest Policy Procedure V5.3.pdf" target="_blank">
+                                        Conflicts of interest policy      
+                                    </a>
+                                </h4><br>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>   
+
+                   
+
+                </div>
+
+
+                 <div style="margin-bottom: 18px;">
+<h2 style="display: inline;" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">CADETS CENTRE APPROVAL</h2> 
+                </div>
+<div class="row">
+<div class="col-sm-3">
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="300ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/zip.png" class="img-responsive" alt="zip icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/centre_support/GA Centre Approval Forms.zip">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="docs/centre_support/GA Centre Approval Forms.zip"  target="_blank">
+                                        Gatehouse Cadets Examination Center Approval Form       
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                   
+
+                </div>
+            </div>
+          </div>
+        </section>
+        <!-- 
+        ================================================== 
+            Clients Section Start
+        ================================================== 
+        <section id="clients">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="subtitle text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".3s">Our Happy Clinets</h2>
+                        <p class="subtitle-des text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".5s">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, error.</p>
+                        <div id="clients-logo" class="owl-carousel">
+                            <div>
+                                <img src="images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-5.jpg" alt="">
+                            </div>
+                             <div>
+                                <img src="images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-5.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+
+
+
+
+        <!-- 
+        ================================================== 
+            Call To Action Section Start
+        ================================================== -->
+        <section id="call-to-action">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="block">
+<!--
+                            <h2 class="title wow fadeInDown" data-wow-delay=".3s"   data-wow-duration="500ms">SO WHAT YOU THINK ?</h1>
+                            <p class="wow fadeInDown" data-wow-delay=".5s" data-wow-duration="500ms">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis,<br>possimus commodi, fugiat magnam temporibus vero magni recusandae? Dolore, maxime praesentium.</p>
+                            <a href="contact.html" class="btn btn-default btn-contact wow fadeInDown" data-wow-delay=".7s" data-wow-duration="500ms">Contact With Me</a>
+-->
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 
+        ================================================== 
+            Footer Section Start
+        ================================================== -->
+        <footer id="footer">
+            <div class="container">
+                <div class="col-md-8">
+                    <p class="copyright">Copyright: <span>2016</span> </p>
+                </div>
+                <div class="col-md-4">
+                    <!-- Social Media -->
+<!--
+                    <ul class="social">
+                        <li>
+                            <a href="#" class="Facebook">
+                                <i class="ion-social-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Twitter">
+                                <i class="ion-social-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Linkedin">
+                                <i class="ion-social-linkedin"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Google Plus">
+                                <i class="ion-social-googleplus"></i>
+                            </a>
+                        </li>
+                        
+                    </ul>
+-->
+                </div>
+            </div>
+        </footer> <!-- /#footer -->
+    </body>
+</html>

@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+<!-- Basic Page Needs
+        ================================================== -->
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="icon" type="image/png" href="images/favicon.png">
+<title>Support</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<!-- Mobile Specific Metas
+        ================================================== -->
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Template CSS Files
+        ================================================== -->
+<!-- Twitter Bootstrs CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<!-- Ionicons Fonts Css -->
+<link rel="stylesheet" href="css/ionicons.min.css">
+<!-- animate css -->
+<link rel="stylesheet" href="css/animate.css">
+<!-- Hero area slider css-->
+<link rel="stylesheet" href="css/slider.css">
+<!-- owl craousel css -->
+<link rel="stylesheet" href="css/owl.carousel.css">
+<link rel="stylesheet" href="css/owl.theme.css">
+<link rel="stylesheet" href="css/jquery.fancybox.css">
+<!-- template main css file -->
+<link rel="stylesheet" href="css/main.css">
+<!-- responsive css -->
+<link rel="stylesheet" href="css/responsive.css">
+
+<!-- Template Javascript Files
+        ================================================== -->
+<script src="js/jquery.min.js"></script>
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+
+<script type="text/javascript">
+		 	if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
++function ($) {
+  'use strict';
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1) || (version[0] > 2)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher, but lower than version 3')
+  }
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.6
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.6'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>  
+   
+
+</head>
+<body>
+
+
+	<!--
+        ==================================================
+        Header Section Start
+        ================================================== -->
+	<header id="top-bar" class="navbar-fixed-top animated-header">
+		<!--<nav class="navbar-collapse " role="navigation"
+			style="margin-top: 0px; margin-bottom: 0px;">
+
+			<div class="container" id="nav-container">
+				<div id="languagePanel">
+					img alt="Italy flag" src="../images/flags/italy-18.png">
+					<a href="index-eng.php"><img alt="English flag" src="images/flags/uk-18.png"></a>
+				</div>
+			</div>
+		</nav> -->
+		<nav class="navbar-collapse " role="navigation"
+			style="margin-top: 0px; margin-bottom: 0px;">
+
+			<div class="container" id="nav-container">
+				<div id="languagePanel">
+					<!-- img alt="Italy flag" src="../images/flags/italy-18.png"> -->
+					<a href="English/support.html"><img alt="English flag" src="images/flags/uk-18.png"></a>
+				</div>
+				<!-- main menu -->
+
+				<div class="navbar-header">
+					<!-- responsive nav button -->
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#main-menu">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<!-- /responsive nav button -->
+
+					<!-- logo -->
+					<div class="navbar-brand">
+						<a href="index.php"> <img src="images/gatehouse-logo.png"
+							alt="gatehouse logo" style="height: 84px;">
+						</a> 
+					</div>
+					<!-- /logo -->
+				</div>
+
+				<div class="collapse navbar-collapse" id="main-menu">
+          <ul class="nav navbar-nav navbar-right">
+            <!-- <li><a href="index.php" class="activ">Home</a></li> -->
+            <li class="nav-item dropdown">
+              
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >Exam <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                  <li><a  href="CLASSIC/exam.html" class="dropdown-item"><span style="text-transform: none;">Classic</span></a></li>
+                  <li><a href="exam.html" class="dropdown-item"><span style="text-transform: none;">Tie</span></a></li>
+                  
+                  <li><a href="cadets exam.html" class="dropdown-item"><span style="text-transform: none;">Cadets</span></a></li>
+                  </ul>
+
+              </li>
+            <li><a href="support.html">Support</a></li>
+            <!-- <li><a href="price_list.html">Price List</a></li> -->
+            
+            <li><a href="centri_desame.html" >Centri d'esame</a></li>
+            <li><a href="centre_support.html">Centre Support</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+				<!-- /main nav -->
+			</div>
+		</nav>
+	</header>
+
+	<!-- 
+        ================================================== 
+            Global Page Section Start
+        ================================================== -->
+	<section class="global-page-header">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="block">
+						<h2>SUPPORT</h2>
+            <h4>Select the exam by clicking on the logo</h4>
+						
+                <div class="block wow fadeInUp" data-wow-delay=".3s">
+                <div class="col-sm-4">
+                                  
+
+                                    <a href="#classic"  > <img src="images/Classic-Logo-Trans.png" style="max-width: 150px;">
+                                  </a>
+               </div>
+                
+                
+              <div class="col-sm-4" style="margin-top: 15px;" >
+                                    
+                                      <a href="#tie"> <img src="images/TIE-LOGO.png" style="max-width: 150px;" >  
+                                        
+                                    </a>
+                                
+              </div>
+                
+              <div class="col-sm-4" style="margin-top: 15px;">
+
+                                <a href="#cadets" > <img src="images/Cadets logo.png" style="max-width: 150px;"></a>
+                            </div>
+                          </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="works service-page">
+    
+		<div id="classic" class="container">
+
+			<h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s"
+				data-wow-duration="2500ms">CLASSIC INTERLOCUTOR-INVIGILATOR – REQUISITI MINIMI E LE PROCEDURE DI FORMAZIONE</h2>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+				data-wow-duration="500ms">I Centri d’Esame GATEHOUSE Classic devono abilitare almeno un collaboratore ad agire con la qualifica di Interlocutor-Invigilator. Una sessione GA CLASSIC deve essere gestita, ispezionata ed esaminata da una sola persona abilitata ed autorizzata. Il GATEHOUSE CLASSIC Interlocutor-Invigilator si certifica partecipando con successo ad uno dei WEBINAR abilitanti organizzati da Gatehouse ITALIA. La regolarità di una sessione d'esame è responsabilità dell'Interlocutore-Invigilatore che segue attentamente e diligentemente le linee guida.</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".7s"
+				data-wow-duration="500ms">La procedura per diventare un GA Classic Interlocutor-Invigilator certificato è la seguente:</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+
+				<b> 1. Partecipare a un webinar o seminario introduttivo</b>
+			</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				 L'evento introduttivo può essere online o frontale. Il candidato deve inviare il CV e il <a style="color: #079446" href="docs/CLASSIC Webinar application form.docx" target="_blank"> modulo di domanda</a> a: <a
+					href="mailto:m.stajkovic@gatehouse.it" target="_blank">m.stajkovic@gatehouse.it</a>.
+				 </p>
+
+				<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s" data-wow-duration="500ms">
+				Il requisito minimo per diventare un Interlocutore-Invigilatore Certificato GA è:
+				</p>
+
+				<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s" data-wow-duration="500ms">
+				- Deve aver raggiunto la competenza quasi nativa o essere un madrelingua inglese,<br>
+				- Deve essere in grado di utilizzare l'inglese al livello che consente al candidato di svolgere tutte le attività nell'esame,<br>
+				- Deve avere una laurea in inglese (in lingue o un diploma TEFL / TESOL riconosciuto a livello internazionale),<br>
+				- Deve avere almeno 3 anni di esperienza di insegnamento recente e rilevante,<br>
+				- Non dovrebbe essere l'insegnante di lingua inglese del candidato.
+			</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s" data-wow-duration="500ms">		
+			Le date del webinar / seminario sono pubblicate regolarmente sul sito web di GA Italy. La scadenza per la registrazione è di 2 giorni lavorativi prima della data dell'evento.
+
+			</p>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				
+				 <b> 2. Completamento del test</b></p>
+				 
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				Tutti gli Interlocutori-Invigilatori che hanno frequentato un webinar o un seminario, devono completare un test sui regolamenti della consegna degli esami GA Classic. Il test verrà inviato direttamente all'Interlocutor-Invigilator e dovrà essere restituito entro 10 giorni lavorativi.</p>
+				<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">	
+				Il feedback verrà inviato a tutti gli Interlocutori-Invigilatori.
+				</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">	
+				<b> 3. Supervisione</b></p>
+				
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				 GA Italia supervisionerà le prime due sessioni d'esame di ciascun Interlocutore-Invigilator. La supervisione verrà effettuata tramite Skype. Il feedback verrà fornito agli Interlocutori-Invigilatori.
+			</p>
+			</div>
+			
+	<!--/#Page header-->
+
+
+	<!-- 
+        ================================================== 
+            Service Page Section  Start
+        ================================================== 
+        <section id="service-page" class="pages service-page">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="block">
+                            <h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">What We Love To Do</h2>
+                            <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s" data-wow-duration="500ms">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis porro recusandae non quibusdam iure adipisci.</p>
+                            <div class="row service-parts">
+                                <div class="col-md-6">
+                                    <div class="block wow fadeInUp animated" data-wow-duration="400ms" data-wow-delay="600ms">
+                                        <i class="ion-ios-paper-outline"></i>
+                                        <h4>BRANDING</h4>
+                                        <p>Veritatis eligendi, dignissimos. Porta fermentum mus aute pulvinar earum minus platea massa feugiat rutrum urna facilisi ipsameum.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="block wow fadeInUp animated" data-wow-duration="400ms" data-wow-delay="800ms">
+                                        <i class="ion-ios-pint-outline"></i>
+                                        <h4>DESIGN</h4>
+                                        <p>Veritatis eligendi, dignissimos. Porta fermentum mus aute pulvinar earum minus platea massa feugiat rutrum urna facilisi ipsameum.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="block wow fadeInUp animated" data-wow-duration="400ms" data-wow-delay="1s">
+                                        <i class="ion-ios-paper-outline"></i>
+                                        <h4>DEVELOPMENT</h4>
+                                        <p>Veritatis eligendi, dignissimos. Porta fermentum mus aute pulvinar earum minus platea massa feugiat rutrum urna facilisi ipsameum.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="block wow fadeInUp animated" data-wow-duration="400ms" data-wow-delay="1.1s">
+                                        <i class="ion-ios-paper-outline"></i>
+                                        <h4>THEMEING</h4>
+                                        <p>Veritatis eligendi, dignissimos. Porta fermentum mus aute pulvinar earum minus platea massa feugiat rutrum urna facilisi ipsameum.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="block">
+                            <img class="img-responsive" src="images/team.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+
+	<!-- 
+        ================================================== 
+            Works Section Start
+        ================================================== -->
+	
+		<div id="tie" class="container">
+			<h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s"
+				data-wow-duration="2500ms">ESAMINATORE TIE – REQUISITI MINIMI E
+				LE PROCEDURE DI FORMAZIONE</h2>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+				data-wow-duration="500ms">Ognuno dei centri registrati TIE
+				GATEHOUSE può formare una persona del proprio personale per
+				sorvegliare ed esaminare i candidati. Una sessione TIE GATEHOUSE può
+				essere sorvegliata ed esaminata da una singola persona – un
+				esaminatore abilitato o da due persone: un sorvegliante e un
+				esaminatore abilitato.</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".7s"
+				data-wow-duration="500ms">La procedura per diventare un
+				esaminatore abilitato TIE GATEHOUSE è la seguente:</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+
+				<b>1. Partecipazione al webinar o seminario introduttivo </b> (<a href="docs/TIE Webinar application form.docx" target="_blank">Webinar Application Form</a>).
+			</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				 L’evento introduttivo si può tenere online o in presenza.
+				I potenziali esaminatori devono inviare i loro CV a <a
+					href="mailto:m.stajkovic@gatehouse.it" target="_blank">m.stajkovic@gatehouse.it</a>.
+				I prerequisiti minimi per diventare un esaminatore TIE GATEHOUSE
+				sono 5 anni di esperienza recente e rilevante e la laurea in Lingua
+				Inglese (o in Lingue Straniere oppure il certificato TEFL/TESOL
+				riconosciuto al livello internazionale). </p>
+				
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				
+				 <b>2. Mark Collection Activity.</b></p>
+				 
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				 Ai candidati che dispongono dei requisiti minimi sarà
+				richiesto di completare l’attività Mark Collection Activity dopo il
+				seminario introduttivo. La Mark Collection Activity sarà inviata via
+				mail direttamente ai potenziali esaminatori che avranno a
+				disposizione 10 giorni per completarla e reinviarla al TIEGATEHOUSE
+				Italy. L’attività è composta dalla valutazione di 6 prove orali. <br>
+				Dopo che la Mark Collection Activity sarà ricevuta dal TIE GATEHOUSE
+				Italy, i voti dei potenziali esaminatori saranno valutati dal
+				personale accademico e un riscontro sarà inviato a tutti gli
+				esaminatori. I docenti che completeranno l’attività con successo,
+				cioè quelli che valuteranno correttamente quattro su sei prove
+				orali, riceveranno l’opportunità di esaminare i candidati della
+				prima sessione del proprio centro. I docenti che non dispongono dei
+				requisiti minimi o non completano la suddetta attività con successo
+				saranno in grado di svolgere il ruolo del sorvegliante.  </p>
+				
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">	
+				<b> 3. Monitoraggio.</b></p>
+				
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+				data-wow-duration="500ms">
+				 TIE GATEHOUSE Italy monitorerà i nuovi esaminatori
+				valutando le loro prestazioni e valutazioni delle prove orali. Agli
+				esaminatori sarà inviato un riscontro. Una volta dimostrato che le
+				prestazioni e valutazioni del nuovo esaminatore corrispondono agli
+				standard dell’ente, non sarà più monitorato, ma solo occasionalmente
+				controllato.
+			</p>
+				
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay="1.5s"
+				data-wow-duration="500ms">Alcuni insegnanti trovano l'idea di
+				preparare la prova senza materiali specifici un po' scoraggiante; in
+				verità le sue caratteristiche permettono di incorporare facilmente
+				la preparazione all'esame all'interno di un corso esistente.</p>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay="1.7s"
+				data-wow-duration="500ms">In preparazione per la prova, gli
+				studenti sono tenuti a svolgere tre attività standard
+				precedentemente specificate, selezionando i propri argomenti e
+				materiali e decidendo come sviluppare ogni attività.</p>
+
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay="1.9s"
+				data-wow-duration="500ms">In aggiunta nel test ci sono due
+				compiti non prestabiliti, che richiedono agli studenti di rispondere
+				sia forma orale che scritta a situazioni impreviste.</p>
+			<p class="subtitle-des wow fadeInUp animated" data-wow-delay="2.1s"
+				data-wow-duration="500ms" style="margin-bottom: 50px;">In questa
+				sezione si mettono a disposizione la modulistica necessaria per
+				amministrare e condurre gli esami TIE ed alcune schede linguistiche
+				utili a supportare la didattica di preparazione ad essi.</p>
+
+			
+				<!--<div class="col-sm-3">
+					<!-- <figure class="wow fadeInLeft animated portfolio-item"
+						data-wow-duration="500ms" data-wow-delay="0ms">
+						<div class="img-wrapper">
+							<img src="images/icons/pdf.png" class="img-responsive"
+								alt="this is a title">
+							<div class="overlay">
+								<div class="buttons">
+
+									<a target="_blank" href="#">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a href="#"> Formal letter </a>
+							</h4>
+
+						</figcaption>
+					</figure> 
+				</div>
+
+				<div class="col-sm-3">
+					<!-- <figure class="wow fadeInLeft animated" data-wow-duration="500ms"
+						data-wow-delay="300ms">
+						<div class="img-wrapper">
+							<img src="images/icons/pdf.png" class="img-responsive"
+								alt="pdf icon">
+							<div class="overlay">
+								<div class="buttons">
+									<a target="_blank" href="docs/film-book-review.pdf">Download</a>
+								</div>
+							</div>
+						</div>
+						<figcaption>
+							<h4>
+								<a href="#"> Review </a>
+							</h4>
+
+						</figcaption>
+					</figure>
+				</div> -->
+
+				<!--<div class="col-sm-3">
+					<!--
+                        <figure class="wow fadeInLeft animated" data-wow-duration="500ms" data-wow-delay="600ms">
+                            <div class="img-wrapper">
+                                <img src="images/icons/PDF icon.resized.jpg" class="img-responsive" alt="pdf icon" >
+                                <div class="overlay">
+                                    <div class="buttons">
+                                         <a target="_blank" href="docs/opinion-giving-essay.pdf">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>
+                                <h4>
+                                    <a href="#">
+                                        Opinion giving essay
+                                    </a>
+                                </h4>
+                                
+                            </figcaption>
+                        </figure>
+
+				</div> -->
+
+
+
+			
+		</div>
+	
+
+  
+    <div id="cadets" class="container">
+      <h2 class="subtitle wow fadeInUp animated" data-wow-delay=".3s"
+        data-wow-duration="2500ms">REQUISITI MINIMI E PROCEDURE DI FORMAZIONE DELL'EXAMINER E DELL'INVIGILATOR</h2>
+
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".5s"
+        data-wow-duration="500ms">Ciascuno dei centri  GA autorizzati ad esaminare giovani studenti con esamiCadets deve formare  almeno un collaboratorecomeExaminer edInvigilator.</p>
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".7s"
+        data-wow-duration="500ms">Una sessione di GA Cadets deve essere vigilata ed esaminata da Examiner di GA Cadets certificati (per l'esame orale) e Invigilator (per l'ascolto, la lettura e la scrittura). La regolarità di una sessione d'esame è responsabilità dell'Examiner e/o dell'Invigilator.</p>
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".7s"
+        data-wow-duration="500ms">La procedura per diventare un Esaminatore abilitato GA Cadetsè la seguente:</p>  
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+        data-wow-duration="500ms">
+
+       <b>1. Partecipare a un webinarintroduttivo o a un seminario
+     </b> </p>
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+        data-wow-duration="500ms">
+         L'evento introduttivo può essere tenuto online o frontale. I potenziali Examiner– Invigilator  devono inviare i loro CV e <a href="docs/CADETS Webinar application form.docx" target="_blank"> un modulo di domanda </a> compilato a <a href="mailto:m.stajkovic@gatehouse.it" target="_blank"> m.stajkovic@gatehouse.it</a>.</p>
+        
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+        data-wow-duration="500ms">
+        
+        I requisiti minimi per diventare un esaminatore certificato GA sono reperibili  <a href="docs/Requirements for ESOL Cadets Examiners.pdf" target="_blank">qui</a>.</p>
+         
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+        data-wow-duration="500ms">
+         Le date del webinar/seminario sono pubblicate regolarmente sul sito Web di GA Italy. La scadenza di registrazione è di 2 giorni lavorativi prima della data dell'evento.</p>
+        
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+        data-wow-duration="500ms">  
+         <b> 2. Completamento del test </b></p>
+        
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay=".9s"
+        data-wow-duration="500ms">
+         Tutti gli Examiner – Invigilator che hanno partecipato a un webinar o a un seminario devono completare un test sui regolamenti relativi alla consegna degli esami di GA Cadets. La prova sarà inviata direttamente all' Examiner – Invigilator e dovrà essere restituita entro 10 giorni lavorativi.
+      </p>
+        
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay="1.5s"
+        data-wow-duration="500ms">I feedback saranno inviati a tutti gli Examiner – Invigilator.</p>
+
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay="1.7s"
+        data-wow-duration="500ms"><b>3. Esame finto</b></p>
+
+      
+      <p class="subtitle-des wow fadeInUp animated" data-wow-delay="2.1s"
+        data-wow-duration="500ms" style="margin-bottom: 50px;">Ogni Examiner deve utilizzare materiali campione per fare una simulazione di esame sia con i membri del  personale sia  con i loro studenti. Questo esame simulato deve essere videoregistrato e inviato a GA Italia entro 10 giorni lavorativi. In alternativa, gli esaminatori saranno osservati durante l'esame simulato. Il feedback sarà fornito a ciascun esaminatore.  </p>
+
+      </div>
+
+
+  </section>
+	<!-- 
+        ================================================== 
+            Clients Section Start
+        ================================================== 
+        <section id="clients">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="subtitle text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".3s">Our Happy Clinets</h2>
+                        <p class="subtitle-des text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".5s">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, error.</p>
+                        <div id="clients-logo" class="owl-carousel">
+                            <div>
+                                <img src="images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-5.jpg" alt="">
+                            </div>
+                             <div>
+                                <img src="images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-5.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+
+
+
+
+	<!-- 
+        ================================================== 
+            Call To Action Section Start
+        ================================================== -->
+	<section id="call-to-action">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="block">
+						<!--
+                            <h2 class="title wow fadeInDown" data-wow-delay=".3s"   data-wow-duration="500ms">SO WHAT YOU THINK ?</h1>
+                            <p class="wow fadeInDown" data-wow-delay=".5s" data-wow-duration="500ms">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis,<br>possimus commodi, fugiat magnam temporibus vero magni recusandae? Dolore, maxime praesentium.</p>
+                            <a href="contact.html" class="btn btn-default btn-contact wow fadeInDown" data-wow-delay=".7s" data-wow-duration="500ms">Contact With Me</a>
+-->
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+
+
+	<!-- 
+        ================================================== 
+            Footer Section Start
+        ================================================== -->
+	<footer id="footer">
+		<div class="container">
+			<div class="col-md-8">
+				<p class="copyright">
+					Copyright: <span>2016</span>
+				</p>
+			</div>
+			<div class="col-md-4">
+				<!-- Social Media -->
+				<!--
+                    <ul class="social">
+                        <li>
+                            <a href="#" class="Facebook">
+                                <i class="ion-social-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Twitter">
+                                <i class="ion-social-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Linkedin">
+                                <i class="ion-social-linkedin"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Google Plus">
+                                <i class="ion-social-googleplus"></i>
+                            </a>
+                        </li>
+                        
+                    </ul>
+-->
+			</div>
+		</div>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+          //Check to see if the window is top if not then display button
+          $(window).scroll(function(){
+            if ($(this).scrollTop() > 100) {
+              $('.scrollToTop').fadeIn();
+            } else {
+              $('.scrollToTop').fadeOut();
+            }
+          });
+          
+          //Click event to scroll to top
+          $('.scrollToTop').click(function(){
+            $('html, body').animate({scrollTop : 0},800);
+            return false;
+          });
+          
+        });
+      </script>
+    <a href="#home" id="toTop" class="scrollToTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+    
+	</footer>
+	<!-- /#footer -->
+</body>
+</html>

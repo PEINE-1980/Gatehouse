@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <!-- Basic Page Needs
+        ================================================== -->
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="icon" type="image/png" href="images/favicon.png">
+        <title>Centri d'esame</title>
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="">
+        <!-- Mobile Specific Metas
+        ================================================== -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Template CSS Files
+        ================================================== -->
+        <!-- Twitter Bootstrs CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <!-- Ionicons Fonts Css -->
+        <link rel="stylesheet" href="css/ionicons.min.css">
+        <!-- animate css -->
+        <link rel="stylesheet" href="css/animate.css">
+        <!-- Hero area slider css-->
+        <link rel="stylesheet" href="css/slider.css">
+        <!-- owl craousel css -->
+        <link rel="stylesheet" href="css/owl.carousel.css">
+        <link rel="stylesheet" href="css/owl.theme.css">
+        <link rel="stylesheet" href="css/jquery.fancybox.css">
+        <!-- template main css file -->
+        <link rel="stylesheet" href="css/main.css">
+        <!-- responsive css -->
+        <link rel="stylesheet" href="css/responsive.css">
+        
+        <!-- Template Javascript Files
+        ================================================== -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+        
+        <!---- start-smoth-scrolling---->
+	<script type="text/javascript" src="js/move-top.js"></script>
+	<script type="text/javascript" src="js/easing.js"></script>
+	<script type="text/javascript">
+				jQuery(document).ready(function($) {
+					$(".scroll").click(function(event){		
+						event.preventDefault();
+						$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
+					});
+				});
+			</script>
+
+	<!--start-smoth-scrolling-->
+	<script type="text/javascript">
+			$(function(){
+				$('input[name=submit]').click(function(){
+					var inputText = document.getElementsByName("email")[0].value
+					var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
+					if(inputText.match(mailformat))  
+					{  
+						$.ajax({  
+							  type: "POST",  
+							  url: "addremovemail.php",  
+							  data: $("#contact-form").serialize(),  
+							  success: function(data) {  
+								$('#popup').html(data);  
+							  }  
+							});  
+							return false; 
+					}  
+					else  
+					{  
+						$('#popup').html("Invalid email address!");    
+						return false;  
+					}  
+					 
+				});
+				$('input[name=remove]').click(function(){
+					var inputText = document.getElementsByName("email")[0].value
+					var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
+					if(inputText.match(mailformat))  
+					{  
+						$.ajax({  
+							  type: "POST",  
+							  url: "removeemail.php",  
+							  data: $("#contact-form").serialize(),  
+							  success: function(data) {  
+								$('#popup').html(data);  
+							  }  
+							});  
+							return false;  
+					}
+					else  
+					{  
+						$('#popup').html("Invalid email address!");    
+						return false;  
+					}  
+				});
+			})
+		 </script>
+<script type="text/javascript">
+		 	if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
++function ($) {
+  'use strict';
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1) || (version[0] > 2)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher, but lower than version 3')
+  }
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.6
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.6'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+    </head>
+    <style>
+    @media (min-width:768px){.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9{float:left}.col-sm-12{width:100%}.col-sm-11{width:91.66666667%}.col-sm-10{width:83.33333333%}.col-sm-9{width:75%}.col-sm-8{width:66.66666667%}.col-sm-7{width:58.33333333%}.col-sm-6{width:50%}.col-sm-5{width:41.66666667%}.col-sm-4{width:33.33333333%}.col-sm-3{width:25%}.col-sm-2{width:16.66666667%}.col-sm-1{width:8.33333333%}.col-sm-pull-12{right:100%}.col-sm-pull-11{right:91.66666667%}.col-sm-pull-10{right:83.33333333%}.col-sm-pull-9{right:75%}.col-sm-pull-8{right:66.66666667%}.col-sm-pull-7{right:58.33333333%}.col-sm-pull-6{right:50%}.col-sm-pull-5{right:41.66666667%}.col-sm-pull-4{right:33.33333333%}.col-sm-pull-3{right:25%}.col-sm-pull-2{right:16.66666667%}.col-sm-pull-1{right:8.33333333%}.col-sm-pull-0{right:auto}.col-sm-push-12{left:100%}.col-sm-push-11{left:91.66666667%}.col-sm-push-10{left:83.33333333%}.col-sm-push-9{left:75%}.col-sm-push-8{left:66.66666667%}.col-sm-push-7{left:58.33333333%}.col-sm-push-6{left:50%}.col-sm-push-5{left:41.66666667%}.col-sm-push-4{left:33.33333333%}.col-sm-push-3{left:25%}.col-sm-push-2{left:16.66666667%}.col-sm-push-1{left:8.33333333%}.col-sm-push-0{left:auto}.col-sm-offset-12{margin-left:100%}.col-sm-offset-11{margin-left:91.66666667%}.col-sm-offset-10{margin-left:83.33333333%}.col-sm-offset-9{margin-left:75%}.col-sm-offset-8{margin-left:66.66666667%}.col-sm-offset-7{margin-left:58.33333333%}.col-sm-offset-6{margin-left:50%}.col-sm-offset-5{margin-left:41.66666667%}.col-sm-offset-4{margin-left:33.33333333%}.col-sm-offset-3{margin-left:25%}.col-sm-offset-2{margin-left:16.66666667%}.col-sm-offset-1{margin-left:8.33333333%}.col-sm-offset-0{margin-left:0}}
+
+    @media (min-width: 994px) and (max-width: 1198px) {.col-sm-3 {width: 33%}}
+
+    @media (min-width: 768px) and (max-width: 993px) {.col-sm-3 {width: 50%}}
+</style>
+    <body>
+        <!--
+        ==================================================
+        Header Section Start
+        ================================================== -->
+        <header id="top-bar" class="navbar-fixed-top animated-header">
+        	 <nav class="navbar-collapse " role="navigation" style="margin-top: 0px; margin-bottom: 0px;">
+                    
+	            <div class="container" id="nav-container">
+	                <div id="languagePanel">
+							<!-- img alt="Italy flag" src="images/flags/italy-18.png"> -->
+							<a href="English/centres.html"><img alt="English flag" src="images/flags/uk-18.png"></a>
+						</div>
+	                <!-- main menu -->
+	               
+	                    <div class="navbar-header">
+		                    <!-- responsive nav button -->
+		                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-menu">
+			                    <span class="sr-only">Toggle navigation</span>
+			                    <span class="icon-bar"></span>
+			                    <span class="icon-bar"></span> 
+			                    <span class="icon-bar"></span>
+		                    </button>
+		                    <!-- /responsive nav button -->
+		                    
+		                    <!-- logo -->
+		                    <div class="navbar-brand">
+		                       <a href="index.php" >
+		                            <img src="images/gatehouse-logo.png" alt="gatehouse logo" style="height: 84px;">
+		                        </a>
+								
+		                    </div>
+		                    <!-- /logo -->
+		                </div>
+	                    
+	                    <div class="collapse navbar-collapse" id="main-menu">
+					<ul class="nav navbar-nav navbar-right">
+						<!-- <li><a href="index.php" class="activ">Home</a></li> -->
+						<li class="nav-item dropdown">
+							
+							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >Exam <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+    							<li><a  href="CLASSIC/exam.html" class="dropdown-item"><span style="text-transform: none;"> Classic</span></a></li>
+   								<li><a href="exam.html" class="dropdown-item"><span style="text-transform: none;"> Tie</span></a></li>
+    							<li><a href="cadets exam.html" class="dropdown-item"><span style="text-transform: none;"> Cadets</span></a></li>
+  								</ul>
+
+							</li>
+						<li><a href="support.html">Support</a></li>
+						<!-- <li><a href="price_list.html">Price List</a></li> -->
+						
+						<li><a href="#" >Centri d'esame</a></li>
+						<li><a href="centre_support.html">Centre Support</a></li>
+						<li><a href="contact.html">Contact</a></li>
+					</ul>
+				</div>
+	                
+	                <!-- /main nav -->
+	            </div>
+            </nav>
+        </header>
+
+        <!-- 
+        ================================================== 
+            Global Page Section Start
+        ================================================== -->
+        <section class="global-page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="block">
+                            <h2>Centri d'esame</h2>
+                            <ol class="breadcrumb">
+                                <li>
+                                    <a href="index.php">
+                                        <i class="ion-ios-home"></i>
+                                        Home
+                                    </a>
+                                </li>
+                                <li class="active">Centri d'esame</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+        </section><!--/#Page header-->
+
+
+      
+
+
+        <!-- 
+        ================================================== 
+            Works Section Start
+        ================================================== -->
+        <section class="works service-page">
+            <div class="container">
+            	<div class="row center" style="margin-bottom: 15px; font-size: 16px;">
+				<div class="col-sm-6">
+					<table style="text-align: left;">
+						<tr>
+							<td><a class="linak" href="#abruzzo"> &nbsp; ABRUZZO</a></td>
+						</tr>
+						
+						
+						<tr>
+							<td><a class="linak" href="#basilicata"> &nbsp; BASILICATA</a></td>
+						</tr>
+						<tr>
+							<td><a class="linak" href="#calabria"> &nbsp; CALABRIA</a></td>
+						</tr>
+						<tr>
+							<td><a class="linak" href="#campania"> &nbsp; CAMPANIA</a></td>
+						</tr>
+						<tr>
+							<td><a class="linak" href="#emila"> &nbsp; EMILIA-ROMAGNA</a></td>
+						</tr>
+						
+						<tr>
+							<td><a class="linak" href="#lazio"> &nbsp; LAZIO</a></td>
+						</tr>
+						<tr>
+							<td><a class="linak" href="#liguria"> &nbsp; LIGURIA</a></td>
+						</tr>
+						<tr>
+							<td><a class="linak" href="#lombardia"> &nbsp; LOMBARDIA</a></td>
+						</tr>
+						 <tr>
+							<td><a class="linak" href="#marche"> &nbsp; MARCHE</a></td>
+						</tr>
+					</table>
+				</div>
+				
+				<div class="col-sm-6">
+					<table style="text-align: left;">
+						
+						<tr>
+							<td><a class="linak" href="#molise"> &nbsp; MOLISE</a></td>
+						</tr> 
+						<tr>
+							<td><a class="linak" href="#piemonte"> &nbsp; PIEMONTE</a></td>
+						</tr>
+            <tr>
+              <td><a class="linak" href="#apulia"> &nbsp; PUGLIA</a></td>
+            </tr>
+						<!--<tr>
+							<td><a class="linak" href="#sanmarino"> &nbsp; REPUBBLICA DI SAN MARINO</a></td>
+						</tr> -->
+						<tr>
+							<td><a class="linak" href="#sardimnia"> &nbsp; SARDEGNA</a></td>
+						</tr>
+						
+						
+						<tr>
+							<td><a class="linak" href="#sicilia"> &nbsp; SICILIA</a></td>
+						</tr>
+						
+						
+						<tr>
+							<td><a class="linak" href="#trentino"> &nbsp; TRENTINO-ALTO ADIGE</a></td>
+						</tr>
+						
+						
+						<tr>
+							<td><a class="linak" href="#toscana"> &nbsp; TOSCANA</a></td>
+						</tr>
+						
+						
+						<tr>
+							<td><a class="linak" href="#umbria"> &nbsp; UMBRIA</a></td>
+						</tr>
+						
+						
+						<tr>
+							<td><a class="linak" href="#veneto"> &nbsp; VENETO</a></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+            
+            <h2  id="abruzzo" name="abruzzo"  class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION ABRUZZO</h2>
+			<div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    AVEZZANO
+                                </h4>
+                                <i>Centre:</i> WORK AHOY <br>
+								<i>Web:</i> <a href="http://www.workahoy.com" target="_blank"> www.workahoy.com</a><br>
+								<i>Address:</i> Via Monte San Michele 4, 67051 Avezzano,  L'Aquila<br>
+								<i>Contact Email:</i> <a href="mailto:workahoy@hotmail.com" target="_blank">workahoy@hotmail.com</a><br>
+								<i>Phone Number:</i> 0863 1940 237<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+                
+                
+                
+                
+                <h2 id="basilicata" name="basilicata" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION BASILICATA</h2>   
+            	 
+                <div class="row">
+                   
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MARATEA
+                                </h4>
+                                <i>Centre:</i> OXFORD COLLEGE MITA - SEDE DI MARATEA<br>
+								<i>Web:</i>  <a href="http://www.oxfordcollegemita.it" target="_blank"> www.oxfordcollegemita.it</a><br>
+								<i>Address:</i> Via Rovita 7- Centro Storico, 85046 Maratea, Potenza<br>
+								<i>Contact Email:</i> <a href="mailto:oxfordcollegemitamaratea@gmail.com" target="_blank"> oxfordcollegemitamaratea@gmail.com</a>, <a href="mailto:dannepesce@gmail.com">dannepesce@gmail.com</a><br>
+								<i>Phone Number:</i> 0973 44 0160; 346 000 7100<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MATERA
+                                </h4>
+                                <i>Centre:</i> CAMERA DI CONCILIAZIONE NAZIONALE SRL<br>
+								<i>Web:</i>  <a style="font-size: auto;" href="http://www.cameradiconciliazionenazionale.it" target="_blank"> www.cameradiconciliazionenazionale.it </a><br>
+								<i>Address:</i> Via Dante Alighieri 82/G F, 75100 Matera,  Matera <br>
+								<i>Contact Email:</i> <a href="mailto:tocepasquale@gmail.com" target="_blank"> tocepasquale@gmail.com</a>, <a href="mailto:centrolinguisticomatera@gmail.com">centrolinguisticomatera@gmail.com</a><br>
+								<i>Phone Number:</i> 0835 33 57 82; 347 39 64 716<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    POLICORO
+                                </h4>
+                                <i>Centre:</i> EUREKA POLICORO<br>
+								<i>Web:</i><a href="http://www.eurekapolicoro.com" target="_blank"> www.eurekapolicoro.com</a><br>
+								<i>Address:</i> Via Santa Croce SNC, 75025 Policoro, Matera<br>
+								<i>Contact Email:</i> <a href="mailto:eureka@eurekapolicoro.com" target="_blank"> eureka@eurekapolicoro.com</a><br>
+								<i>Phone Number:</i> 0835 97 36 00<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                 POTENZA
+                                </h4>
+                                <i>Centre:</i> CFI FERRARA<br>
+                <i>Web:</i><a href="http://www.cfi-fe.it" target="_blank"> www.cfi-fe.it</a><br>
+                <i>Address:</i> Via della Tecnica 18, 85100 Potenza, Potenza<br>
+                <i>Contact Email:</i> <a href="mailto:formazione@cfiscuola.it" target="_blank"> formazione@cfiscuola.it</a><br>
+                <i>Phone Number:</i> 0532 78 35 61<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                </div>
+                
+                <h2 id="calabria" name="calabria" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION CALABRIA</h2>   
+            	 
+                <div class="row">
+                   
+                    <!--<div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    CATANZARO
+                                </h4>
+                                <i>Centre:</i> Europe Speaks English<br>
+								<i>Web:</i>  <a href="http://" target="_blank"> </a><br>
+								<i>Address:</i> Discesa Piazza Nuova 8, 88100 Catanzaro<br>
+								<i>Contact Email:</i> <a href="mailto:ese.lmr1@gmail.com" target="_blank"> ese.lmr1@gmail.com</a><br>
+								<i>Phone Number:</i> 0961741385<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> -->
+                    
+                    
+                   
+                    
+                   
+
+					<div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    COSENZA
+                                </h4>
+                                <i>Centre:</i> LEARNING FOR LIFE DI MOLINARO FRANCESCA<br>
+								<i>Web:</i> <a href="http://www.schoolandcollegelistings.com" target="_blank"> www.schoolandcollegelistings.com</a><br>
+								<i>Address:</i> Via Felice fiore 5, 87100 Cosenza, Cosenza<br>
+								<i>Contact Email:</i> <a href="mailto:infolearningforlife@gmail.com" target="_blank"> infolearningforlife@gmail.com</a><br>
+								<i>Phone Number:</i> 327 39 52 097<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    COSENZA
+                                </h4>
+                                <i>Centre:</i> PROJECTLIFE CALABRIA COOPERATIVA SOCIALE A.R.L.<br>
+								<i>Web:</i>  <a href="http://www.projectlife.it" target="_blank"> www.projectlife.it</a><br>
+								<i>Address:</i> Via Duca degli Abruzzi n.20, 87100 Cosenza, Cosenza<br>
+								<i>Contact Email:</i> <a href="mailto:info@projectlife.it" target="_blank"> info@projectlife.it</a><br>
+								<i>Phone Number:</i> 0984 28 936<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    COSENZA
+                                </h4>
+                                <i>Centre:</i> ACADEMY OF LANGUAGES<br>
+                                <i>Web:</i><a href="http://www.britishschool.it" target="_blank"> www.britishschool.it</a><br>
+                                <i>Address:</i> C.so Mazzini 1/B, 87100 Cosenza, Cosenza<br>
+                                <i>Contact Email:</i> <a href="mailto:direzione@animed.it" target="_blank"> direzione@animed.it</a><br>
+                                <i>Phone Number:</i> 0984 22 822<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    LAMEZIA TERME
+                                </h4>
+                                <i>Centre:</i> BDG 2000 (BRITISH INSTITUTES LAMEZIA TERME)<br>
+								<i>Web:</i><a href="http://www.bdg2000.it" target="_blank"> www.bdg2000.it</a><br>
+								<i>Address:</i> Corso G. Nicotera 193, 88046 Lamezia Terme, Catanzaro<br>
+								<i>Contact Email:</i> <a href="mailto:bdglamezia@libero.it" target="_blank"> bdglamezia@libero.it</a><br>
+								<a href="mailto:info@bdg2000.it" target="_blank"> info@bdg2000.it</a><br>
+								<a href="mailto:bdg2000@pcert.it" target="_blank"> bdg2000@pcert.it</a><br>
+								
+								<i>Phone Number:</i> 0968 44 87 44<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    REGGIO CALABRIA
+                                </h4>
+                                <i>Centre:</i> INFORMATIC WORLD ASSOCIAZIONE NO PROFIT<br>
+								<i>Web:</i>  <a href="http://www.informaticworld.it" target="_blank"> www.informaticworld.it</a><br>
+								<i>Address:</i> Via Sbarre Inferiori 234/C, 89129 Reggio Calabria, Reggio Calabria<br>
+								<i>Contact Email:</i> <a href="mailto:info@informaticworld.biz" target="_blank"> info@informaticworld.biz</a><br>
+								<a href="mailto:info@informaticworld.it" target="_blank"> info@informaticworld.it</a><br>
+								<i>Phone Number:</i> 0965 59 53 67<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    REGGIO CALABRIA
+                                </h4>
+                                <i>Centre:</i> CALEDONIAL ENGLISH<br>
+                                <i>Web:</i> <a href="http://www.caledonianenglish.com" target="_blank"> www.caledonianenglish.com</a> <br>
+                                <i>Address:</i> Via B. Camagna 13, 89125 Reggio Calabria, Reggio Calabria<br>
+                                <i>Contact Email:</i> <a href="mailto:dave@caledonianenglish.com" target="_blank"> dave@caledonianenglish.com</a><br>
+                                <i>Phone Number:</i> 388 05 38 561<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> 
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    REGGIO CALABRIA
+                                </h4>
+                                <i>Centre:</i> CALEDONIAL ENGLISH VENUE<br>
+                                <i>Web:</i> <a href="http://www.caledonianenglish.com" target="_blank"> www.caledonianenglish.com</a> <br>
+                                <i>Address:</i> Via XXIV Maggio 6, 89125 Reggio Calabria, Reggio Calabria<br>
+                                <i>Contact Email:</i> <a href="mailto:info@caledonianenglish.com" target="_blank"> info@caledonianenglish.com</a><br>
+                                <i>Phone Number:</i> 388 05 38 561<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> 
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    REGGIO CALABRIA
+                                </h4>
+                                <i>Centre:</i> OXFORD INSTITUTE REGGIO<br>
+								<i>Web:</i><a href="http://www.oxfordinstitutesrc.it" target="_blank"> www.oxfordinstitutesrc.it</a><br>
+								<i>Address:</i> Via Barlaam 9, 89127 Reggio Calabria, Reggio Calabria<br>
+								<i>Contact Email:</i> <a href="mailto:formazione.rc@libero.it" target="_blank"> formazione.rc@libero.it</a><br>
+								
+								<i>Phone Number:</i> 0965 89 59 81; 377 69 14 354<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    RENDE
+                                </h4>
+                                <i>Centre:</i> OXFORD COLLEGE MITA RENDE<br>
+								<i>Web:</i> <a href="http://www.oxfordcollegemitarende.it" target="_blank"> www.oxfordcollegemitarende.it</a> <br>
+								<i>Address:</i> Via Rossini 145/B, 87036 Rende, Cosenza<br>
+								<i>Contact Email:</i> <a href="mailto:formazioneoxford@gmail.com" target="_blank"> formazioneoxford@gmail.com</a><br>
+								
+								<i>Phone Number:</i> 0984 18 62 706<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                </div>
+                
+                <h2 id="campania" name="campania" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION CAMPANIA</h2>   
+            	 
+                <div class="row">
+
+                	
+                  <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    AFRAGOLA
+                                </h4>
+                                <i>Centre:</i> 1° CIRCOLO DIDATTICO "GUGLIELMO MARCONI" <br>
+                <i>Web:</i> <a href="http://www.1circolomarconi.edu.it" target="_blank"> www.1circolomarconi.edu.it</a> <br>
+                <i>Address:</i> Piazza Marconi 2, 80021 Afragola, Napoli<br>
+                <i>Contact Email:</i> <a href="mailto:nt0005.linked2@gmail.com" target="_blank"> nt0005.linked2@gmail.com</a><br>
+                <i>Phone Number:</i> 081 86 91 389 <br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                   <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    BATTIPAGLIA
+                                </h4>
+                                <i>Centre:</i> CENTRO SCOLASTICO D ISTUZIONE  V.ALFIERI SRL <br>
+								<i>Web:</i> <a href="http://www.informazione-aziende.it" target="_blank"> www.informazione-aziende.it</a> <br>
+								<i>Address:</i> Via Rosario 10, 84091 Battipaglia, Salerno<br>
+								<i>Contact Email:</i> <a href="mailto:dfpunzi@alice.it" target="_blank"> dfpunzi@alice.it</a><br>
+								<i>Phone Number:</i> 320 65 61 758<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    CASERTA
+                                </h4>
+                                <i>Centre:</i> PEOPLE UP SPLS - OXFORD COLLEGE MITA CASERTA<br>
+								<i>Web:</i>  <a href="http://www.oxfordcollegemitacaserta.it" target="_blank"> www.oxfordcollegemitacaserta.it </a><br>
+								<i>Address:</i> Largo Daniel Bovet 1, 81100 Caserta, Napoli<br>
+								<i>Contact Email:</i> <a href="mailto:oxfordcollegemita.ce@gmail.com" target="_blank"> oxfordcollegemita.ce@gmail.com</a><br>
+								<i>Phone Number:</i> 0823 15 40 843; 320 62 74 171; 388 75 41 331<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ISCHIA
+                                </h4>
+                                <i>Centre:</i> CENTRO D’INIZIATIVA DEMOCRATICA DEGLI INSEGNANTI ISOLA D’ISCHIA<br>
+								<i>Web:</i> <a href="http://www.ischiacidi.it" target="_blank"> www.ischiacidi.it</a><br>
+								<i>Address:</i> Via Delle Ginestre 3, 80077 Ischia, Napoli<br>
+								<i>Contact Email:</i> <a href="mailto:ischiacidi@libero.it" target="_blank"> ischiacidi@libero.it</a><br>
+								<i>Phone Number:</i> 081 99 26 70; 333 42 77 791<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                   <!-- <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    NAPOLI
+                                </h4>
+                                <i>Centre:</i> ABC LINGUE PER…CORSI DIDATTICI<br>
+								<i>Web:</i><br>
+								<i>Address:</i> CORSO GARIBALDI N.54-AFRAGOLA-NAPLES-80021<br>
+								<i>Contact Email:</i> <a href="mailto:angiec@blu.it" target="_blank"> angiec@blu.it</a><br>
+								<i>Phone Number:</i> 3492258574<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> -->
+                    
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    NAPOLI
+                                </h4>
+                                <i>Centre:</i> ASSOCIAZIONE GIACOIA<br>
+								<i>Web:</i><a href="http://www.associazionegiacoia.com" target="_blank"> www.associazionegiacoia.com</a> <br>
+								<i>Address:</i> Via Toledo 106, 80132 Napoli, Napoli<br>
+								<i>Contact Email:</i> <a href="mailto:i.giacoia@libero.it" target="_blank"> i.giacoia@libero.it</a><br>
+								<i>Phone Number:</i> 081 48 28 46<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    NAPOLI
+                                </h4>
+                                <i>Centre:</i> IUM ACADEMY<br>
+								<i>Web:</i><a href="http://www.universita-mediazione.com" target="_blank"> www.universita-mediazione.com</a> <br>
+								<i>Address:</i> Piazza Nicola Amore 6, 80138 Napoli, Napoli<br>
+								<i>Contact Email:</i> <a href="mailto:segreteria@academyschool.it" target="_blank"> segreteria@academyschool.it</a><br>
+								<i>Phone Number:</i> 081 553 8629<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    NAPOLI
+                                </h4>
+                                <i>Centre:</i> FROM RETAIL<br>
+                <i>Web:</i><a href="http://www.formretail.it" target="_blank"> www.formretail.it</a> <br>
+                <i>Address:</i> Via Cappella Vecchia 8, 80121 Napoli, Napoli<br>
+                <i>Contact Email:</i> <a href="mailto:certificazionilingue@formretail.it" target="_blank"> certificazionilingue@formretail.it</a><br>
+                <i>Phone Number:</i> 081 24 74 611<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                  
+                    
+                    
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    NOLA
+                                </h4>
+                                <i>Centre:</i> DEMETRA FORMAZIONE<br>
+                                <i>Web:</i><a href="http://www.demetraform.it" target="_blank"> www.demetraform.it</a><br>
+                                <i>Address:</i> Via G.Pontano 6/12, 80035 Nola, Napoli<br>
+                                <i>Contact Email:</i> <a href="mailto:info@demetraform.it " target="_blank"> info@demetraform.it </a><br>
+                                <i>Phone Number:</i> 0818 23 34 10<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> 
+                     
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    SALERNO
+                                </h4>
+                                <i>Centre:</i> GULLIVER SRL TRADING AS BRITISH SCHOOL INTERNATIONAL<br>
+								<i>Web:</i>  <a href="http://www.britishsalerno.it" target="_blank"> www.britishsalerno.it</a><br>
+								<i>Address:</i> Via Silvio Baratta 110, 84125 Salerno, Salerno<br>
+								<i>Contact Email:</i> <a href="mailto:veronica.bisogno@britishsalerno.it" target="_blank"> veronica.bisogno@britishsalerno.it</a><br>
+								<i>Phone Number:</i> 0899 95 69 45<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    SCAFATI
+                                </h4>
+                                <i>Centre:</i> CENTRO STUDI CARTESIO S.R.L.<br>
+                                <i>Web:</i><a href="http://www.cscartesio.it" target="_blank"> www.cscartesio.it</a> <br>
+                                <i>Address:</i> Via Alcide De Gasperi Traversa Montale 10, 84018 Scafati, Salerno<br>
+                                <i>Contact Email:</i> <a href="mailto:cs.cartesio@libero.it " target="_blank"> cs.cartesio@libero.it </a><br>
+                                <i>Phone Number:</i> 081 34 49 405<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> 
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    VITULAZIO
+                                </h4>
+                                <i>Centre:</i> NEW EDUCATION CENTER<br>
+								<i>Web:</i> <a href="http://www.neweducation.it" target="_blank"> www.neweducation.it</a><br>
+								<i>Address:</i> Piazza Riccardo II° n°4, 81041 Vitulazio, Caserta
+ <br>
+								<i>Contact Email:</i> <a href="mailto:gruppoformativo@gmail.com " target="_blank"> gruppoformativo@gmail.com </a><br>
+								<i>Phone Number:</i> 0823 96 53 54<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+					
+                </div>
+                
+                <h2 id="emila" name="emila" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION EMILIA-ROMAGNA</h2>   
+            	 
+                <div class="row">
+                   
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    BOLOGNA
+                                </h4>
+                                <i>Centre:</i> DINAMICHE FUTURE – CULTURA DIDATTICA SERVIZI<br>
+								<i>Web:</i>  <a href="http://www.cds-bologna.it" target="_blank"> www.cds-bologna.it</a><br>
+								<i>Address:</i> Via Ranzani 7/c, 40127 Bologna, Bologna<br>
+								<i>Contact Email:</i> <a href="mailto:info@cds-bologna.it" target="_blank"> info@cds-bologna.it</a><br>
+								<i>Phone Number:</i> 051 42 11 579 ; 331 83 64 026<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FERRARA
+                                </h4>
+                                <i>Centre:</i> WALL STREET ENGLISH FERRARA<br>
+								<i>Web:</i>  <a href="http://www.wallstreet.it" target="_blank"> www.wallstreet.it</a><br>
+								<i>Address:</i> Via Giusti 15, 44124 Ferrara, Ferrare
+<br>
+								<i>Contact Email:</i> <a href="mailto:service@wallstreetferrara.it" target="_blank"> service@wallstreetferrara.it</a><br>
+								<i>Phone Number:</i> 053 297 77 03 ; 371 138 0654 ; 0811 96 45 477<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FERRARA
+                                </h4>
+                                <i>Centre:</i> CFI FERRARA<br>
+								<i>Web:</i><a href="http://www.cfi-fe.it" target="_blank"> www.cfi-fe.it</a><br>
+								<i>Address:</i> Via Monsignor Luigi Maverna 44, 44122 Ferrara, Ferrare
+<br>
+								<i>Contact Email:</i> <a href="mailto:formazione@cfiscuola.it" target="_blank"> formazione@cfiscuola.it</a><br>
+								<i>Phone Number:</i> 0532 78 35 61<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MODENA
+                                </h4>
+                                <i>Centre:</i> FOR LANGUAGE SRL (WALLSTREET MODENA)<br>
+								<i>Web:</i>  <a href="http://www.wallstreet.it" target="_blank"> www.wallstreet.it</a><br>
+								<i>Address:</i> Via Pietro Giannone 2, 41121 Modena, Modena
+<br>
+								<i>Contact Email:</i> <a href="mailto:modena1@walstreet.it" target="_blank"> modena1@walstreet.it</a>, <a href="mailto:servicemanagermodena@wallstreet.it">servicemanagermodena@wallstreet.it</a>, <a href="mailto:rcasari@wallstreet.it">rcasari@wallstreet.it</a><br>
+								<i>Phone Number:</i> 059 24 42 75<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PARMA
+                                </h4>
+                                <i>Centre:</i> CENTRO STUDI "G. PARINI" ( SOCIETÀ COOPERATIVA SOCIALE)<br>
+								<i>Web:</i><a href="http://www.centrostudiparini.it" target="_blank"> www.centrostudiparini.it</a><br>
+								<i>Address:</i> Via Mazzini 6, 43121 Parma, Parma<br>
+								<i>Contact Email:</i> <a href="mailto:segreteria@centrostudiparini.it" target="_blank"> segreteria@centrostudiparini.it</a><br>
+								<i>Phone Number:</i> 324 69 69 699; 0521 57 39 63<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PIACENZA
+                                </h4>
+                                <i>Centre:</i> THE LANGUAGE CLUB<br>
+								<i>Web:</i><a href="http://www.thelanguageclub.it" target="_blank"> www.thelanguageclub.it</a><br>
+								<i>Address:</i> <a href="https://www.google.com/maps/place/Via+Venturini,+6,+29121+Piacenza+PC,+Italy/@45.0486656,9.6859954,17z/data=!3m1!4b1!4m5!3m4!1s0x4780dd5a61f94bc5:0x33dd84190b867dd!8m2!3d45.0486656!4d9.6881841" target="_blank"> Via Venturini 6, 29121 Piacenza, Piacenza
+</a><br>
+								<i>Contact Email:</i> <a href="mailto:info@thelanguageclub.it" target="_blank"> info@thelanguageclub.it</a><br>
+								<i>Phone Number:</i> 0523 155 49 28<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                </div>
+                
+                <h2 id="lazio" name="lazio" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION LAZIO</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    COLLEFERRO
+                                </h4>
+                                <i>Centre:</i> ISTITUTO DI ISTRUZIONE MARESCA D. SRL<br>
+                                <i>Web:</i> <a href="http://www.istitutomarescad.it" target="_blank"> www.istitutomarescad.it</a><br>
+                                <i>Address:</i> Via Artigianato 2/A, 00034 Colleferro, Roma
+<br>
+                                <i>Contact Email:</i> <a href="mailto:segreteria@istitutomarescad.it" target="_blank"> segreteria@istitutomarescad.it</a><br>
+                                <i>Phone Number:</i> 069 70 22 12; 388 36 43 664<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> 
+                    
+					
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FROSINONE
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI FROSINONE<br>
+                                <i>Web:</i> <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a> <br>
+                                <i>Address:</i> Via Pietro Mascagni 26, 03100 Frosinone, Frosinone
+<br>
+                                <i>Contact Email:</i> <a href="mailto:frosinone@nissolinocorsi.itm" target="_blank"> frosinone@nissolinocorsi.it</a><br>
+                                <i>Phone Number:</i> 0775 18 60 479<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> EASY LIFE GROUP SRL<br>
+								<i>Web:</i>  <a href="http://www.easy-life.com" target="_blank"> www.easy-life.com</a><br>
+								<i>Address:</i> Via Bartolo da Sassoferrato 9, 00165 Roma, Roma
+<br>
+								<i>Contact Email:</i> <a href="mailto:panzarani@easy-life.com" target="_blank"> panzarani@easy-life.com</a><br>
+								<i>Phone Number:</i> 06 37 20 815<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> EQS - ENGLISH QUALIFICATION SERVICES S.R.L.<br>
+								<i>Web:</i><a href="http://www.eqsenglish.com" target="_blank"> www.eqsenglish.com</a><br>
+								<i>Address:</i><a href="https://www.google.com/maps/place/Via+Caiazzo,+52,+00132+Roma+RM,+Italy/@41.89429,12.6280813,17z/data=!3m1!4b1!4m5!3m4!1s0x132f7cd701d191d3:0xc3cd04764e3aa1ce!8m2!3d41.89429!4d12.63027" target="_blank"> Via Caiazzo 52, 00132 Roma, Roma
+<br>
+								<i>Contact Email:</i> <a href="mailto:lccieb@eqsenglish.com" target="_blank"> lccieb@eqsenglish.com</a><br>
+								<i>Phone Number:</i> 062 24 20 671<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> INFOLANG SRL<br>
+								<i>Web:</i> <a href="http://www.infolang.it" target="_blank"> www.infolang.it</a> <br>
+								<i>Address:</i> Via Scribonio Curione 46, 00175 Roma, Roma
+<br>
+								<i>Contact Email:</i> <a href="mailto:didattica@infolang.it" target="_blank"> didattica@infolang.it</a><br>
+								<i>Phone Number:</i> 06 99 70 1343<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI SRL<br>
+								<i>Web:</i>  <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a><br>
+								<i>Address:</i> Via Gaetano Luporini 34, 00124 Roma, Roma
+<br>
+								<i>Contact Email:</i> <a href="mailto:roma@nissolinocorsi.it" target="_blank"> roma@nissolinocorsi.it</a><br>
+								<i>Phone Number:</i> 0650 91 43 35; 0650 91 25 30; 0650 91 19 22<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+					<div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> TRUST EUROPE LANGUAGE SERVICES SRL<br>
+								<i>Web:</i>  <a href="http://www.trusteurope.it" target="_blank"> www.trusteurope.it</a><br>
+								<i>Address:</i> Via Delle Montagne Rocciose 23, 00144 Roma, Roma
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@trusteurope.it" target="_blank"> info@trusteurope.it</a><br>
+								<i>Phone Number:</i> 065 91 08 24<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <!-- <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> ASSOCIAZIONE ENGLISH HOUSE NOMENTANA<br>
+								<i>Web:</i>  <br>
+								<i>Address:</i> Via Val Trompia 128-130 , 00141 Roma<br>
+								<i>Contact Email:</i> <a href="mailto:eh.montemario@gmail.com" target="_blank"> eh.montemario@gmail.com</a><br>
+								<i>Phone Number:</i> 328 3455387<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> -->
+                   
+                   <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> ISTITUTO BABELE <br>
+								<i>Web:</i> <a href="http://www.istitutobabele.it" target="_blank"> www.istitutobabele.it</a> <br>
+								<i>Address:</i> Via Dei Gerani 15, 00172 Roma, Roma
+<br>
+								<i>Contact Email:</i> <a href="mailto:Info@istitutobabele.it" target="_blank"> Info@istitutobabele.it</a><br>
+								<i>Phone Number:</i> 066 40 15 519<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ROMA
+                                </h4>
+                                <i>Centre:</i> NOI STUDENTI<br>
+                <i>Web:</i> <a href="http://www.noi-studenti.it" target="_blank"> www.noi-studenti.it</a> <br>
+                <i>Address:</i> Via Val Trompia 128-130, 00141 Roma, Roma
+
+<br>
+                <i>Contact Email:</i> <a href="mailto:eh.montemario@gmail.com" target="_blank"> eh.montemario@gmail.com</a><br>
+                <i>Phone Number:</i> 328 34 55 387<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    
+                </div>
+                
+                <h2 id="liguria" name="liguria" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION LIGURIA</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    GENOVA
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI GENOVA<br>
+								<i>Web:</i>  <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a><br>
+								<i>Address:</i> Via Domenico Fiasella 10, 16121 Genova, Genova
+<br>
+								<i>Contact Email:</i> <a href="mailto:genova@nissolinocorsi.it" target="_blank"> genova@nissolinocorsi.it</a><br>
+								<i>Phone Number:</i> 010 09 83 077<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+                <h2 id="lombardia" name="lombardia" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION LOMBARDIA</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    BERGAMO
+                                </h4>
+                                <i>Centre:</i>  WALL STREET ENGLISH BERGAMO (IS.I.FO.L. S.R.L.)<br>
+								<i>Web:</i>  <a href="http://www.wallstreet.it/bergamo" target="_blank"> www.wallstreet.it</a><br>
+								<i>Address:</i> Via Brigata Lupi 6, 24122 Bergamo, Bergamo
+<br>
+								<i>Contact Email:</i> <a href="mailto:cdooge@wallstreet.it" target="_blank"> cdooge@wallstreet.it</a><br>
+								<i>Phone Number:</i> 035 22 45 31<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    CESANO MADERNO
+                                </h4>
+                                <i>Centre:</i>  EUROATENEO SAS<br>
+								<i>Web:</i> <a href="http://www.euroateneo.it" target="_blank"> www.euroateneo.it</a> <br>
+								<i>Address:</i> Via Nazionale dei Giovi 42/a, 20811 Cesano Maderno, Monza – Brianza
+<br>
+								<i>Contact Email:</i> <a href="mailto:euroateneo@euroateneo.it" target="_blank"> euroateneo@euroateneo.it</a><br>
+								<i>Phone Number:</i> 0362 15 40 693; 393 90 04 707<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    DESENZANO
+                                </h4>
+                                <i>Centre:</i>  DIESSETIME FORMAZIONE<br>
+								<i>Web:</i>  <a href="http://www.diessetime.com" target="_blank"> www.diessetime.com</a><br>
+								<i>Address:</i> Diessetime Formazione C/O Gold Center Via Adua 3, 25015 Desenzano del garda, Brescia
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@diessetime.it" target="_blank"> info@diessetime.it</a><br>
+								<i>Phone Number:</i> 030 99 11 924<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MEDA
+                                </h4>
+                                <i>Centre:</i> ISTITUTO COMPRENSIVO STATALE VIA CIALDINI<br>
+								<i>Web:</i>  <a href="http://www.istitutocialdini.gov.it" target="_blank"> www.istitutocialdini.gov.it</a><br>
+								<i>Address:</i> <a href="https://www.google.com/maps/place/Via+Yuri+Gagarin,+2,+20821+Meda+MB,+Italy/@45.6608357,9.1580533,17z/data=!3m1!4b1!4m5!3m4!1s0x4786bd64a56bd905:0x69e5102590bbe3e3!8m2!3d45.6608357!4d9.160242" target="_blank"> Via Gagarin 2, 20821 Meda, Monza – Brianza
+</a><br>
+								<i>Contact Email:</i><a href="mailto:miic857007@istruzione.it" target="_blank"> miic857007@istruzione.it</a><br>
+								<i>Phone Number:</i> 036 27 21 47<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MILANO
+                                </h4>
+                                <i>Centre:</i> OXFORDCENTRE INTERNATIONAL ACADEMY<br>
+								<i>Web:</i>  <a href="http://oxfordcentre.eu" target="_blank">www.oxfordcentre.eu</a><br><a href="http://dirdipiu.it" target="_blank"> www.dirdipiu.it</a><br>
+								<i>Address:</i><a href="https://www.google.com/maps/place/Corso+Buenos+Aires,+47,+20124+Milano+MI,+Italy/@45.4812869,9.209094,17z/data=!3m1!4b1!4m5!3m4!1s0x4786c6c212f4743d:0xebfbb7cefe9deafa!8m2!3d45.4812869!4d9.2112827" target="_blank"> Corso Buenos Aires 47, 20124 Milano, Milano
+</a><br>
+								<i>Contact Email:</i> <a href="mailto:milano@oxfordcentre.eu" target="_blank"> milano@oxfordcentre.eu</a><br>
+								<i>Phone Number:</i> 348 222 1642<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MILANO
+                                </h4>
+                                <i>Centre:</i> ICOTEA<br>
+                                <i>Web:</i> <a href="http://www.icotea.it" target="_blank"> www.icotea.it </a><br>
+                                <i>Address:</i> Via Mecenate 105, 20138 Milano, Milano
+<br>
+                                <i>Contact Email:</i> <a href="mailto:icotea@icotea.it" target="_blank"> icotea@icotea.it</a><br>
+                                <i>Phone Number:</i> 02 98 65 0005<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    VARESE
+                                </h4>
+                                <i>Centre:</i> IL CAVEDIO SOCIETÀ COOPERATIVA - VARESECORSI <br>
+                                <i>Web:</i> <a href="http://www.varesecorsi.net" target="_blank"> www.varesecorsi.net </a> <br>
+                                <i>Address:</i> Piazza della Motta 4, 21100 Varese, Varese
+<br>
+                                <i>Contact Email:</i> <a href="mailto:corsi@varesecorsi.net" target="_blank"> corsi@varesecorsi.net</a><br>
+                                <i>Phone Number:</i> 0332 28 72 81<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div> 
+                </div>
+                
+				<h2 id="marche" name="marche" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION MARCHE</h2>   
+            	 
+                <div class="row">
+
+                	<div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ANCONA
+                                </h4>
+                                <i>Centre:</i> INLINGUA ANCONA - TEACH ARTS SRL<br>
+                <i>Web:</i>  <a href="http://www.inlingua-ancona.it" target="_blank"> www.inlingua-ancona.it</a><br>
+                <i>Address:</i> Via L.Menicucci 1, 60121 Ancona, Ancona
+
+<br>
+                <i>Contact Email:</i> <a href="mailto:direzione@inlingua-ancona.it" target="_blank"> direzione@inlingua-ancona.it</a>, <a href="mailto:info@inlingua-ancona.it">info@inlingua-ancona.it</a><br>
+                <i>Phone Number:</i> 070 20 40 20; 366 87 27 136
+<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FERMO
+                                </h4>
+                                <i>Centre:</i> LO.VI.S.S. FORMAZIONE SRL<br>
+								<i>Web:</i>  <a href="http://www.scuoleparitarieloviss.it" target="_blank"> www.scuoleparitarieloviss.it</a><br>
+								<i>Address:</i> Via G. Da Mogliano 21, 63900 Fermo, Fermo
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@scuolaparitarieloviss.it" target="_blank"> info@scuolaparitarieloviss.it</a><br>
+								<i>Phone Number:</i> 0734 22 83 10<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                     
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PESARO
+                                </h4>
+                                <i>Centre:</i> CENTRO LINGUISTICO PER L’IMPRESA DI RAGNETTI GIANCARLO<br>
+								<i>Web:</i><a href="http://www.clisas.it" target="_blank"> www.clisas.it</a><br>
+								<i>Address:</i> Via Goffredo Mameli 42/A,61121 Pesaro, Pesaro e Urbino
+ <br>
+								<i>Contact Email:</i> <a href="mailto:giancarlo.ragnetti@tin.it" target="_blank"> giancarlo.ragnetti@tin.it</a><br>
+								<i>Phone Number:</i> 072 12 42 91, 348 61 00 717
+<br>
+								
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    RIPATRANSONE
+                                </h4>
+                                <i>Centre:</i> RIPA ISTITUTI LO.VI.S.S.<br>
+                <i>Web:</i>  <a href="http://www.scuoleparitarieloviss.it" target="_blank"> www.scuoleparitarieloviss.it</a><br>
+                <i>Address:</i> C. Da San Rustico 35, 63065 Ripatransone, Ascoli Piceno 
+<br>
+                <i>Contact Email:</i> <a href="mailto:info@scuolaparitarieloviss.it" target="_blank"> info@scuolaparitarieloviss.it</a><br>
+                <i>Phone Number:</i> 0734 228310<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                </div>
+                
+                <h2 id="molise" name="molise" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION MOLISE</h2>   
+            	 
+                <div class="row">
+                   
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TERMOLI
+                                </h4>
+                                <i>Centre:</i> HELLO LANGUAGE SCHOOL
+<br>
+								<i>Web:</i>  <a href="http://www.helloenglishlanguage.com" target="_blank"> www.helloenglishlanguage.com</a><br>
+								<i>Address:</i> Via dei Roveri 1, 86039 Termoli, Campobasso
+<br>
+								<i>Contact Email:</i> <a href="mailto:helloenglish@hotmail.it" target="_blank">helloenglish@hotmail.it</a><br>
+								<i>Phone Number:</i> 393 45 53 152; 340 85 06 225
+<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div> 
+                
+                <h2 id="piemonte" name="piemonte" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION PIEMONTE</h2>   
+            	 
+                <div class="row">
+					
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TORINO
+                                </h4>
+                                <i>Centre:</i> DIRDIPIU' LINGUE NEL MONDO<br>
+                                <i>Web:</i>  <a href="http://www.dirdipiu.it" target="_blank"> www.dirdipiu.it</a><br>
+								<i>Address:</i> Corso Regio Parco 2, 10153 Torino, Torino
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@dirdipiu.it" target="_blank">info@dirdipiu.it</a><br>
+								<i>Phone Number:</i> 011 52 11 715<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                     
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    VERCELLI
+                                </h4>
+                                <i>Centre:</i> OXFORDCENTRE INTERNATIONAL ACADEMY OF VERCELLI<br>
+                                <i>Web:</i>  <a href="http://www.oxfordcentre.eu" target="_blank"> www.oxfordcentre.eu</a><br>
+								<i>Address:</i> Dante Alighieri 10, 13100 Vercelli, Vercelli
+<br>
+								<i>Contact Email:</i> <a href="mailto:vercelli@oxfordcentre.ru" target="_blank">vercelli@oxfordcentre.ru</a><br>
+								<i>Phone Number:</i> 0161 502 400<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                </div>
+
+                <h2  id="apulia" name="puglia"  class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION PUGLIA</h2>
+      <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ANDRIA
+                                </h4>
+                                <i>Centre:</i> METAINFOR S.R.L.S. <br>
+                <i>Web:</i> <a href="http://www.metainfor.it" target="_blank"> www.metainfor.it</a><br>
+                <i>Address:</i>  <a href="https://goo.gl/maps/h9J7UjcPPuw" target="_blank"> Via Pugnani 1, 76123 Andria, Barletta-Andria-Trani
+</a><br>
+                <i>Contact Email:</i> <a href="mailto:a.inchingolo@metainfor.com" target="_blank">a.inchingolo@metainfor.com</a><br>
+                <i>Phone Number:</i> 329 39 28 895<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    BARI
+                                </h4>
+                                <i>Centre:</i> CONVITTO D.CIRILLO <br>
+                <i>Web:</i> <a href="http://www.convittocirillo.gov.it" target="_blank"> www.convittocirillo.gov.it</a><br>
+                <i>Address:</i>  Via D.Cirillo 33, 70126 Bari, Bari 
+<br>
+                <i>Contact Email:</i> <a href="mailto:annapapapicco@gmail.com" target="_blank"> annapapapicco@gmail.com</a><br>
+                <i>Phone Number:</i> 328 222 9735<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                   
+                    
+
+                     
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FOGGIA
+                                </h4>
+                                <i>Centre:</i> ASTRAMBIENTE PUGLIA<br>
+                <i>Web:</i>  <a href="http://www.astrambientepuglia.wordpress.com/tag/astrambiente-puglia/" target="_blank" style="font-size: 12px;"> www.astrambientepuglia.wordpress.com</a><br>
+                <i>Address:</i> Viale Ofanto 122, 71122 Foggia, Foggia
+<br>
+                <i>Contact Email:</i> <a href="mailto:astrambientepug2014@libero.it" target="_blank"> astrambientepug2014@libero.it</a><br>
+                <i>Phone Number:</i> 0881 66 46 49; 338 42 54 866<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MONOPOLI
+                                </h4>
+                                <i>Centre:</i> THE CAMBRIDGE SCHOOL MONOPOLI<br>
+                <i>Web:</i> <a href="http://www.thecambridgeschool.it" target="_blank"> www.thecambridgeschool.it</a><br>
+                <i>Address:</i> Via S. Anna 63, 70043 Monopoli, Bari 
+<br>
+                <i>Contact Email:</i> <a href="mailto:monopoli@thecambridgeschool.it " target="_blank"> monopoli@thecambridgeschool.it </a><br>
+                <i>Phone Number:</i> 080 32 10 573<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PULSANO
+                                </h4>
+                                <i>Centre:</i> OXFORD COLLEGE MITA CENTRE IN PULSANO (TA)<br>
+                <i>Web:</i> <a href="http://www.facebook.com/Oxford-College-MITA-Pulsano-517817544943880/" target="_blank" style="font-size: 12px"> www.facebook.com/Oxford-College-MITA-Pulsano-517817544943880/ </a><br>
+                <i>Address:</i> <a href="https://www.google.com/maps/place/Via+Luigi+Pirandello,+21,+74026+Pulsano+TA,+Italy/@40.3853815,17.3584299,17z/data=!3m1!4b1!4m5!3m4!1s0x1346e3bd82ef824d:0x556c6964d4e405fc!8m2!3d40.3853815!4d17.3606186" target="_blank"> Via Luigi Pirandello 21/A, 74026 Pulsano, Taranto
+</a><br>
+                <i>Contact Email:</i> <a href="mailto:pulsano@oxfordcollegemita.it " target="_blank"> pulsano@oxfordcollegemita.it </a><br>
+                <i>Phone Number:</i> 348 14 99 268<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                
+                <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    RACALE
+                                </h4>
+                                <i>Centre:</i> MY SCHOOL<br>
+                <i>Web:</i> <a href="http://www.myschooledu.it" target="_blank"> www.myschooledu.it</a><br>
+                <i>Address:</i>  Piazza Beltrano 5, 73055 Racale, Lecce
+<br>
+                <i>Contact Email:</i> <a href="mailto:segreteria@myschooledu.it" target="_blank">segreteria@myschooledu.it</a><br>
+                <i>Phone Number:</i> 0833 19 39 183<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                      <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    RUFFANO
+                                </h4>
+                                <i>Centre:</i> SPEAK UP! - ASSOCIAZIONE LINGUISTICO-CULTURALE<br>
+                <i>Web:</i>  <a href="http://facebook.com/Speakupruffano" target="_blank"> www.facebook.com/Speakupruffano</a><br>
+                <i>Address:</i> Via Carducci 14, 73049 Ruffano, Lecce
+<br>
+                <i>Contact Email:</i> <a href="mailto:speakupruffano@gmail.com" target="_blank"> speakupruffano@gmail.com</a><br>
+                <i>Phone Number:</i> 331 70 00 838<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                
+
+
+                <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    RUVO DI PUGLIA
+                                </h4>
+                                <i>Centre:</i> CIOFS RUVO<br>
+                <i>Web:</i><a href="http://www.ciofsfppuglia.it" target="_blank"> www.ciofsfppuglia.it</a><br>
+                <i>Address:</i>  C.so Antonio Jatta 19, 70087 Ruvo di Puglia, Bari 
+<br>
+                <i>Contact Email:</i> <a href="mailto:direzione.ciofsruvo@gmail.com" target="_blank">direzione.ciofsruvo@gmail.com</a><br>
+                <i>Phone Number:</i> 80 36 13 506<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+
+
+                <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TARANTO
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI TARANTO PRESSO ISTITUTO MASTERFORM<br>
+                <i>Web:</i><a href="http://www.istitutomasterform.it" target="_blank"> www.istitutomasterform.it</a><br>
+                <i>Address:</i>  Via Alto Adige 27, 74121 Taranto, Taranto
+<br>
+                <i>Contact Email:</i> <a href="mailto:r.maringola@gmail.com" target="_blank">r.maringola@gmail.com</a><br>
+                <i>Phone Number:</i> 333 94 38 275<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+             <!--   <h2 id="sanmarino" name="sanmarino" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REPUBBLICA DI SAN MARINO</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    DOGANA
+                                </h4>
+                                <i>Centre:</i> DRIBE SRL<br>
+								<i>Web:</i>  <a href="http://www.soloformazione.it" target="_blank"> www.soloformazione.it</a><br>
+								<i>Address:</i> Via Tre Settembre,99, 47891 Dogana, Rep. San Marino<br>
+								<i>Contact Email:</i> <a href="mailto:amministrazione@dribe.it" target="_blank"> amministrazione@dribe.it</a><br>
+								<i>Phone Number:</i> 0549963371<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                </div> -->
+                
+                <h2 id="sardimnia" name="sardimnia" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION SARDEGNA</h2>   
+            	 
+                <div class="row">
+                	
+
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    NUORO
+                                </h4>
+                                <i>Centre:</i> ISTITUTO SUPERIORE A. VOLTA IPSIA-IPSS<br>
+                                <i>Web:</i><a href="https://www.iisvoltanuoro.gov.it" target="_blank"> www.iisvoltanuoro.gov.it</a> <br>
+                                <i>Address:</i> Via Pietro Mastino 50, 08100 Nuoro, Nuoro
+<br>
+                                <i>Contact Email:</i>  <a href="mailto:nuis014007@pec.istruzione.it"  target="_blank"> nuis014007@pec.istruzione.it</a><br>
+                                <i>Phone Number:</i> 0784 23 08 80<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    SASSARI
+                                </h4>
+                                <i>Centre:</i> INLINGUA SASSARI<br>
+								<i>Web:</i><a href="http://www.inlingua.it" target="_blank"> www.inlingua.it</a><br>
+								<i>Address:</i> Piazza Mazzotti 6, 07100 Sassari, Sassari
+<br>
+								<i>Contact Email:</i> <a href="mailto:inlinguasassari@gmail.com" target="_blank"> inlinguasassari@gmail.com</a><br>
+								<i>Phone Number:</i> 079 28 15 23<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    SELARGIUS
+                                </h4>
+                                <i>Centre:</i> GRUPPO MURA SRL<br>
+								<i>Web:</i>  <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a><br>
+								<i>Address:</i> Via Canova 13, 09047 Selargius, Cagliari
+<br>
+								<i>Contact Email:</i> <a href="mailto:francesca.putzu@gruppomura.com" target="_blank"> francesca.putzu@gruppomura.com</a><br>
+								<i>Phone Number:</i> 327 82 10 607<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+                <h2 id="sicilia" name="sicilia" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION SICILIA</h2>   
+            	 
+                <div class="row">
+                   
+                    
+                    
+                    
+                    
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ALCAMO
+                                </h4>
+                                <i>Centre:</i> CENTRO FORMAZIONE E SERVIZI &quot;LINGUA+&quot;<br>
+								<i>Web:</i>  <a href="http://www.corsilinguapiu.com" target="_blank"> www.corsilinguapiu.com</a><br>
+								<i>Address:</i> Via Domenico La Bruna 39, 91011 Alcamo, Trapani
+<br>
+								<i>Contact Email:</i> <a href="mailto:linguapius@libero.it" target="_blank"> linguapius@libero.it</a><br>
+								<i>Phone Number:</i> 0924 50 11 77<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    CALTANISSETTA
+                                </h4>
+                                <i>Centre:</i> I.I.S.S. RUSSO CALTANISSETTA<br>
+								<i>Web:</i> <a href="http://www.iissrusso.gov.it" target="_blank"> www.iissrusso.gov.it</a> <br>
+								<i>Address:</i> Via Leone XIII n° 48, 93100 Caltanissetta, Caltanissetta
+<br>
+								<i>Contact Email:</i> <a href="mailto:webmaster@iissrusso.edu.it " target="_blank"> webmaster@iissrusso.edu.it</a><br>
+								<i>Phone Number:</i> 0934 55 42 55<br>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    ISPICA
+                                </h4>
+                                <i>Centre:</i> ICOTEA<br>
+								<i>Web:</i>  <a href="http://www.icotea.it" target="_blank"> www.icotea.it</a><br>
+								<i>Address:</i> VIA XX Settembre n.16, 97014 Ispica, Ragusa
+<br>
+								<i>Contact Email:</i> <a href="mailto:icotea@icotea.it" target="_blank"> icotea@icotea.it</a><br>
+								<i>Phone Number:</i> 02 98 65 0005
+                    <br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MESSINA
+                                </h4>
+                                <i>Centre:</i> CLAM - CENTRO LINGUISTICO D’ATENEO MESSINESE<br>
+								<i>Web:</i>  <a href="http://www.clam.unime.it" target="_blank"> www.clam.unime.it</a><br>
+								<i>Address:</i> Via Luciano Manara 54, 98123 Messina, Messina
+<br>
+								<i>Contact Email:</i> <a href="mailto:clam@unime.it" target="_blank"> clam@unime.it</a><br>
+								<i>Phone Number:</i> 090 676 72 00; 090 676 72 01; 090 676 72 02; 090 676 72 03; 090 676 72 04; 090 676 72 05; 090 676 72 06; 090 676 72 07
+                    <br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PALERMO
+                                </h4>
+                                <i>Centre:</i> LUCKY LION SCHOOL SRL<br>
+								<i>Web:</i>  <a href="http://www.luckylion.it" target="_blank"> www.luckylion.it</a><br>
+								<i>Address:</i> Via della Libertà 191 C-D-E, 90143 Palermo, Palermo
+<br>
+								<i>Contact Email:</i> <a href="mailto:didactic.palermo@myes.it" target="_blank"> didactic.palermo@myes.it</a><br>
+								<i>Phone Number:</i> 091 306 962<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PALERMO
+                                </h4>
+                                <i>Centre:</i> COSICERT ACADEMY<br>
+                                <i>Web:</i> <a href="http:/www.cosicertacademy.com" target="_blank"> www.cosicertacademy.com</a><br>
+                                <i>Address:</i> Via Roma n.443, 90139 Palermo, Palermo
+<br>
+                                <i>Contact Email:</i> <a href="mailto:info@cosicert.it" target="_blank"> info@cosicert.it</a><br>
+                                <i>Phone Number:</i> 091 25 25 887<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PALERMO
+                                </h4>
+                                <i>Centre:</i> PROMIMPRESA SRL<br>
+                                <i>Web:</i> <a href="http:/www.promimpresa.it" target="_blank"> www.promimpresa.it</a><br>
+                                <i>Address:</i> Via Duca della Verdura 69, 90100 Palermo, Palermo
+
+<br>
+                                <i>Contact Email:</i> <a href="mailto:palermo@promimpresa.it" target="_blank"> palermo@promimpresa.it</a>; <a href="mailto:promolanguage@promimpresa.it" target="_blank"> promolanguage@promimpresa.it</a> <br>
+                                <i>Phone Number:</i> 091 98 20 968; 091 98 20 863<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PATTI
+                                </h4>
+                                <i>Centre:</i> BRIT CHAT<br>
+                                <i>Web:</i> <a href="http:/www.schoolandcollegelistings.com" target="_blank"> www.schoolandcollegelistings.com</a><br>
+                                <i>Address:</i> Corso Matteotti 134, 98066 Patti, Messina<br>
+
+
+                                <i>Contact Email:</i> <a href="mailto:brit-chat@hotmail.com" target="_blank"> brit-chat@hotmail.com</a>; <br>
+                                <i>Phone Number:</i> 380 77 29 764<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    SAN CATALDO
+                                </h4>
+                                <i>Centre:</i> PROMIMPRESA SRL<br>
+                                <i>Web:</i> <a href="http:/www.promimpresa.it" target="_blank"> www.promimpresa.it</a><br>
+                                <i>Address:</i> Via Trieste 84, 93017 San Cataldo, Caltanissetta<br>
+                                <i>Contact Email:</i> <a href="mailto:sancataldo@promimpresa.it" target="_blank"> sancataldo@promimpresa.it</a>; <a href="mailto:promolanguage@promimpresa.it" target="_blank"> promolanguage@promimpresa.it</a> <br>
+                                <i>Phone Number:</i> 0934 57 25 55 <br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    
+                </div>
+                
+                <h2 id="trentino" name="trentino" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION TRENTINO-ALTO ADIGE</h2>   
+            	 
+                <div class="row">
+                    
+                    
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TRENTO
+                                </h4>
+                                <i>Centre:</i> BRITISH INSTITUTES TRENTO<br>
+								<i>Web:</i>  <a href="http://www.britishinstitutes.it" target="_blank"> www.britishinstitutes.it</a><br>
+								<i>Address:</i> Via Grazioli 104, 38122 Trento, Trento
+<br>
+								<i>Contact Email:</i> <a href="mailto:trento@britishinstitutes.org" target="_blank"> trento@britishinstitutes.org</a><br>
+								<i>Phone Number:</i> 0461 23 83 22<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+                <h2 id="toscana" name="toscana"  class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION TOSCANA</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    CECINA
+                                </h4>
+                                <i>Centre:</i> CENTRO STUDI L`ARCA<br>
+								<i>Web:</i>  <a href="http://www.centrostudiarca.com" target="_blank"> www.centrostudiarca.com</a><br>
+								<i>Address:</i> Piazza Della Liberta' 6, 57023 Cecina, Livorno
+<br>
+								<i>Contact Email:</i> <a href="mailto:Info@centrostudiarca.com" target="_blank"> Info@centrostudiarca.com</a><br>
+								<i>Phone Number:</i> 0586 63 22 33<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FIRENZE
+                                </h4>
+                                <i>Centre:</i> ISTITUTO FORMAZIONE FRANCHI S.R.L.<br>
+								<i>Web:</i>  <a href="http://www.istitutoformazionefranchi.it" target="_blank"> www.istitutoformazionefranchi.it</a><br>
+								<i>Address:</i> Via Marconi 128, 50131 Firenze, Firenze
+<br>
+								<i>Contact Email:</i> <a href="mailto:foppiano@istitutoformazionefranchi.it" target="_blank"> foppiano@istitutoformazionefranchi.it</a><br>
+								<i>Phone Number:</i> 055 58 37 66<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FIRENZE
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI FIRENZE<br>
+								<i>Web:</i>  <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a><br>
+								<i>Address:</i> Piazzale di Porta al Prato 14, 50144 Firenze, Firenze 
+<br>
+								<i>Contact Email:</i> <a href="mailto:firenze@nissolinocorsi.it" target="_blank"> firenze@nissolinocorsi.it</a><br>
+								<i>Phone Number:</i> 0550 51 58 58<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FIRENZE
+                                </h4>
+                                <i>Centre:</i> ITALIANOFULLIMMERSION (S.R.L. ATHENAEUP)<br>
+								<i>Web:</i>  <a href="http://www.italianofullimmersion.it" target="_blank"> www.italianofullimmersion.it</a><br>
+								<i>Address:</i> Via Ghibellina 42 R, 50122 Firenze, Firenze
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@italianofullimmersion.it" target="_blank"> info@italianofullimmersion.it</a><br>
+								<i>Phone Number:</i> 348 86 06 865<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    GROSSETO
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI GROSSETO<br>
+								<i>Web:</i> <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a> <br>
+								<i>Address:</i> Viale matteotti 29, 58100 Grosseto, Grosseto
+<br>
+								<i>Contact Email:</i> <a href="mailto:grosseto@nissolinocorsi.it" target="_blank"> grosseto@nissolinocorsi.it</a><br>
+								<i>Phone Number:</i> 0564 19 33 096<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+                <h2 id="umbria" name="umbria" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION UMBRIA</h2>   
+            	 
+                <div class="row">
+                   
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    CITTÀ DI CASTELLO
+                                </h4>
+                                <i>Centre:</i> LINGUA PIÙ ASSOCIAZIONE CULTURALE CENTRO MONTESSORI PER LE LINGUE<br>
+								<i>Web:</i>  <a href="http://www.linguapiu.eu" target="_blank"> www.linguapiu.eu</a><br>
+								<a href="http://www.learnitalianlang.com" target="_blank"> www.learnitalianlang.com</a><br>
+								<i>Address:</i> Viale Moncenisio 28 06012, Città di Castello, Perugia
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@linguapiu.eu" target="_blank"> info@linguapiu.eu</a><br>
+						
+								<i>Phone Number:</i> 075 85 56 418<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    FOLIGNO
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI FOLIGNO<br>
+                                <i>Web:</i> <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a><br>
+                                <i>Address:</i> Via Giuseppe Mazzini 57, 06034 Foligno, Perugia
+<br>
+                                <i>Contact Email:</i> <a href="mailto:foligno@nissoliocorsi.it" target="_blank"> foligno@nissoliocorsi.it</a><br>
+                                <i>Phone Number:</i> 0742 62 54 10; 342 84 21 806<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    GUBBIO
+                                </h4>
+                                <i>Centre:</i> BUSINESSPOINT SRL<br>
+								<i>Web:</i>  <a href="http://www.businesspoint.cc" target="_blank"> www.businesspoint.cc</a><br>
+								<i>Address:</i> Via Tifernate, 204, C. Comm.le La Contessa, int. 32-33, 06024 Gubbio, Perugia
+<br>
+								<i>Contact Email:</i> <a href="mailto:federica.pellegrini@businesspoint.cc" target="_blank"> federica.pellegrini@businesspoint.cc</a><br>
+								<i>Phone Number:</i> 075 922 01 33<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TERNI
+                                </h4>
+                                <i>Centre:</i> FENICE FORMAZIONE<br>
+								<i>Web:</i>  <a href="http://www.feniceformazione.com" target="_blank"> www.feniceformazione.com</a><br>
+								<i>Address:</i> Via Giuseppe di Vittorio 45, 05100 Terni,Terni
+<br>
+								<i>Contact Email:</i> <a href="mailto:info@feniceformazione.com" target="_blank"> info@feniceformazione.com</a><br>
+								<i>Phone Number:</i> 0744 08 66 79<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TERNI
+                                </h4>
+                                <i>Centre:</i> TEKNA SRL<br>
+								<i>Web:</i><a href="http://www.teknainformatica.it" target="_blank"> www.teknainformatica.it</a><br>
+								<i>Address:</i><a href="https://www.google.com/maps/place/Piazza+Clai,+19,+05100+Terni+TR,+Italy/@42.563197,12.6493742,17z/data=!3m1!4b1!4m5!3m4!1s0x132efb6ebf825559:0x607a5c6304a16a00!8m2!3d42.563197!4d12.6515629" target="_blank"> Piazza Clai 19, 05100 Terni, Terni
+</a><br>
+								<i>Contact Email:</i> <a href="mailto:info@chefacademy.it" target="_blank"> info@chefacademy.it</a><br>
+								<i>Phone Number:</i> 0744 423118<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TERNI
+                                </h4>
+                                <i>Centre:</i> LICEI STATALI ANGELONI<br>
+								<i>Web:</i><a href="http://www.liceiangeloniterni.gov.it" target="_blank"> www.liceiangeloniterni.gov.it</a><br>
+								<i>Address:</i> Via Battisti 100, 05100 Terni, Terni
+<br>
+								<i>Contact Email:</i> <a href="mailto:trpm01000q@istruzione.it" target="_blank"> trpm01000q@istruzione.it</a><br>
+								<i>Phone Number:</i> 0744 30 07 03<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    TERNI
+                                </h4>
+                                <i>Centre:</i> HIPPO ASSOCIAZIONE<br>
+								<i>Web:</i><a href="http://www.hippo-olympiad.org" target="_blank"> www.hippo-olympiad.org</a><br>
+								<i>Address:</i> Voc. S.Maria in Valle 17, 05100 Terni, Terni
+<br>
+								<i>Contact Email:</i> <a href="mailto:development@hippo-olympiad.org" target="_blank"> development@hippo-olympiad.org</a><br>
+								<i>Phone Number:</i> 06 62 27 90 59<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                </div>
+                
+                
+                <h2 id="veneto" name="veneto" class="subtitle wow fadeInUp animated" data-wow-delay=".3s" data-wow-duration="500ms">REGION VENETO</h2>   
+            	 
+                <div class="row">
+                	<div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    BELLUNO
+                                </h4>
+                                <i>Centre:</i> LE LINGUE NEL MONDO<br>
+                                <i>Web:</i><a href="http://www.lelinguenelmondo.it" target="_blank"> www.lelinguenelmondo.it</a> <br>
+                                <i>Address:</i> Via Flavio Ostilio 8 - Liceo Leonardo da Vinci, 32100 Belluno, Belluno
+<br>
+                                <i>Contact Email:</i> <a href="mailto:info@lelinguenelmondo.com" target="_blank"> info@lelinguenelmondo.com</a><br>
+                                <i>Phone Number:</i> 0437 99 453<br>
+                               
+                            </figcaption>
+                        </figure>
+        </div>
+
+        <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MESTRE
+                                </h4>
+                                <i>Centre:</i> (ROYAL CAMBRIDGE SCHOOL AT)
+ISTITUTO SAN MARCO IUSVE <br>
+                                <i>Web:</i><a href="http://www.iusve.it" target="_blank"> www.iusve.it</a> <br>
+                                <i>Address:</i> Via Dci Sacosiani 15, 30170 Mestre, Venezia
+<br>
+                                <i>Contact Email:</i> <a href="mailto:admin@royalcambridgeschool.com" target="_blank"> admin@royalcambridgeschool.com</a><br>
+                                <i>Phone Number:</i> 041 54 98 111; 041 59 87 111<br>
+                               
+                            </figcaption>
+                        </figure>
+        </div>
+
+
+
+        <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MOGLIANO VENETO
+                                </h4>
+                                <i>Centre:</i> ROYAL CAMBRIDGE SCHOOL<br>
+                                <i>Web:</i> <a href="http://www.rcbs.org.uk" target="_blank"> www.rcbs.org.uk</a><br>
+                                <i>Address:</i> Via Don G Bosco 21, 31021 Mogliano Veneto, Treviso
+<br>
+                                <i>Contact Email:</i> <a href="mailto:admin@royalcambridgeschool.com" target="_blank"> admin@royalcambridgeschool.com</a><br>
+                                <i>Phone Number:</i> 349 45 33 326; 347 70 07 231<br>
+                               
+                            </figcaption>
+                        </figure>
+        </div> 
+
+        <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    MOGLIANO VENETO
+                                </h4>
+                                <i>Centre:</i> (ROYAL CAMBRIDGE SCHOOL  AT) 
+COLLEGIO JALESIANO ‘ASTORI’ <br>
+                                <i>Web:</i><a href="http://www.astori.it" target="_blank"> www.astori.it</a> <br>
+                                <i>Address:</i> Via Marconi 22, 31021 Mogliano Veneto, Treviso
+<br>
+                                <i>Contact Email:</i> <a href="mailto:admin@royalcambridgeschool.com" target="_blank"> admin@royalcambridgeschool.com</a><br>
+                                <i>Phone Number:</i> 041 59 87 111<br>
+                               
+                            </figcaption>
+                        </figure>
+        </div>  
+                   	<div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PADOVA
+                                </h4>
+                                <i>Centre:</i> NISSOLINO CORSI PADOVA<br>
+                                <i>Web:</i> <a href="http://www.nissolinocorsi.it" target="_blank"> www.nissolinocorsi.it</a><br>
+                                <i>Address:</i> Via Domenico Turazza 10, 35128 Padova, Padova
+<br>
+                                <i>Contact Email:</i> <a href="mailto:padova@nissolinocorsi.it" target="_blank"> padova@nissolinocorsi.it</a><br>
+                                <i>Phone Number:</i> 049 73 87 976; 049 73 89 148<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PADOVA
+                                </h4>
+                                <i>Centre:</i> CENTRO DIFFUSIONE LINGUE DI CUSINATO ANGELA<br>
+								<i>Web:</i>  <a href="http://www.cdlingue.com" target="_blank"> www.cdlingue.com</a><br>
+								<i>Address:</i> <a href="https://www.google.com/maps/place/Via+del+Portello,+48,+35129+Padova+PD,+Italy/@45.4089655,11.8907544,17z/data=!3m1!4b1!4m5!3m4!1s0x477edaf6ddf43321:0x59072b1612f466bd!8m2!3d45.4089655!4d11.8929431" target="_blank"> Via Del Portello 48, 35129 Padova, Padova
+</a><br>
+								<i>Contact Email:</i> <a href="mailto:direzione@cdlingue.com" target="_blank"> direzione@cdlingue.com</a> ; <a href="mailto:info@cdlingue.com" target="_blank"> info@cdlingue.com</a><br>
+								<i>Phone Number:</i> 049 80 77 671<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                   
+                     
+					
+                    
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    PONTE NELLE ALPI
+                                </h4>
+                                <i>Centre:</i> LE LINGUE NEL MONDO<br>
+                                <i>Web:</i> <a href="http://www.lelinguenelmondo.it" target="_blank"> www.lelinguenelmondo.it</a><br>
+                                <i>Address:</i>  Via Nuova Erto 70, 32014 Ponte Nelle Alpi, Belluno
+<br>
+                                <i>Contact Email:</i> <a href="mailto:info@lelinguenelmondo.com" target="_blank"> info@lelinguenelmondo.com</a><br>
+                                <i>Phone Number:</i> 0437 99 453<br>
+                               
+                            </figcaption>
+                        </figure>
+         </div>
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    VERONA
+                                </h4>
+                                <i>Centre:</i> IN LINGUA VERONA<br>
+								<i>Web:</i>  <a href="http://www.inlinguaverona.it" target="_blank"> www.inlinguaverona.it</a><br>
+								<i>Address:</i> Stradone San Fermo 21, 37121 Verona, Verona
+<br>
+								<i>Contact Email:</i> <a href="mailto:segreteria@inlinguaverona.it" target="_blank"> segreteria@inlinguaverona.it</a>; <a href="mailto:amministrazione@inlinguaverona.it" target="_blank"> amministrazione@inlinguaverona.it</a><br>
+								<i>Phone Number:</i> 045 80 11 999; 045 59 65 60<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                    
+                    <div class="col-sm-3">
+                         <figure class="wow fadeInLeft animated portfolio-item" data-wow-duration="500ms" data-wow-delay="0ms">
+                            <figcaption>
+                                <h4 style="border-bottom: solid 1px; margin-bottom: 5px;">
+                                    VICENZA
+                                </h4>
+                                <i>Centre:</i> IN LINGUA VICENZA<br>
+								<i>Web:</i>  <a href="http://www.interlingua.it" target="_blank"> www.interlingua.it</a><br>
+								<i>Address:</i> Contra’ Santa Barbara 33, 36100 Vicenza, Vicenza
+<br>
+								<i>Contact Email:</i> <a href="mailto:direzione@inlinguavicenza.it" target="_blank"> direzione@inlinguavicenza.it</a><br>
+								<i>Phone Number:</i> 0444 54 67 02<br>
+                               
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+                
+                 
+            </div>
+        </section>
+        <!-- 
+        ================================================== 
+            Clients Section Start
+        ================================================== 
+        <section id="clients">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="subtitle text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".3s">Our Happy Clinets</h2>
+                        <p class="subtitle-des text-center wow fadeInUp animated" data-wow-duration="500ms" data-wow-delay=".5s">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, error.</p>
+                        <div id="clients-logo" class="owl-carousel">
+                            <div>
+                                <img src="images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-5.jpg" alt="">
+                            </div>
+                             <div>
+                                <img src="images/clients/logo-1.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-2.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-3.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-4.jpg" alt="">
+                            </div>
+                            <div>
+                                <img src="images/clients/logo-5.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>-->
+
+
+
+
+
+        <!-- 
+        ================================================== 
+            Call To Action Section Start
+        ================================================== -->
+        <section id="call-to-action">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="block">
+<!--
+                            <h2 class="title wow fadeInDown" data-wow-delay=".3s"   data-wow-duration="500ms">SO WHAT YOU THINK ?</h1>
+                            <p class="wow fadeInDown" data-wow-delay=".5s" data-wow-duration="500ms">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis,<br>possimus commodi, fugiat magnam temporibus vero magni recusandae? Dolore, maxime praesentium.</p>
+                            <a href="contact.html" class="btn btn-default btn-contact wow fadeInDown" data-wow-delay=".7s" data-wow-duration="500ms">Contact With Me</a>
+-->
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 
+        ================================================== 
+            Footer Section Start
+        ================================================== -->
+        <footer id="footer">
+            <div class="container">
+                <div class="col-md-8">
+                    <p class="copyright">Copyright: <span>2016</span> </p>
+                </div>
+                <div class="col-md-4">
+                    <!-- Social Media -->
+<!--
+                    <ul class="social">
+                        <li>
+                            <a href="#" class="Facebook">
+                                <i class="ion-social-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Twitter">
+                                <i class="ion-social-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Linkedin">
+                                <i class="ion-social-linkedin"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="Google Plus">
+                                <i class="ion-social-googleplus"></i>
+                            </a>
+                        </li>
+                        
+                    </ul>
+-->
+                </div>
+            </div>
+            <script type="text/javascript">
+				$(document).ready(function(){
+
+					//Check to see if the window is top if not then display button
+					$(window).scroll(function(){
+						if ($(this).scrollTop() > 100) {
+							$('.scrollToTop').fadeIn();
+						} else {
+							$('.scrollToTop').fadeOut();
+						}
+					});
+					
+					//Click event to scroll to top
+					$('.scrollToTop').click(function(){
+						$('html, body').animate({scrollTop : 0},800);
+						return false;
+					});
+					
+				});
+			</script>
+		<a href="#home" id="toTop" class="scrollToTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+		
+        </footer> <!-- /#footer -->
+    </body>
+</html>
