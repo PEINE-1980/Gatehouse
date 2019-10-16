@@ -506,7 +506,7 @@
 									style="color: #515151; font-size: 13px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">October</font><br> 
 										
-										17th October (Thursday) 2-3pm<br>
+										17th October(Thursday) 2-3pm<br>
 										
 										
 									<br>
@@ -521,7 +521,7 @@
 									style="color: #515151; font-size: 13px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">November</font><br> 
 										
-										15th November (Friday) 2-3pm<br>
+										15th November(Friday) 2-3pm<br>
 										
 										
 									<br>
