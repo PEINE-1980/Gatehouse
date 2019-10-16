@@ -430,6 +430,7 @@
 							data-wow-delay=".4s" style="">
 							<span style="font-weight: bold;">Upcoming <b style="opacity: 1;">CLASSIC</b> Webinars:</span>
 						</h2>
+					</div>
 						
 						
 						
@@ -453,11 +454,11 @@
 							</div>
 						</div> -->
 
-						
+						<div class="col-md-6 text-left" style="padding-left: 0px;">
 
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
-									style="color: #515151; font-size: 13px; font-weight: bold;">
+									style="color: #515151; font-size: 15px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">November</font><br> 
 										
 										13th November (Wednesday) 2-3.30pm<br>
@@ -477,13 +478,15 @@
 							data-wow-delay=".4s" style="">
 							<span style="font-weight: bold;">Upcoming <b style="opacity: 1;">TIE</b> Webinars:</span>
 						</h2>
+					</div>
+
 					
 					
-						
+					<div class="col-md-6 text-left" style="padding-left: 0px;">	
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
-									style="color: #515151; font-size: 14px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">September</font><br> 
+									style="color: #515151; font-size: 15px; font-weight: bold;">
+									<font color="#E6540E" style="font-size: 15px; font-weight: bold;">September</font><br> 
 									26th September (Thursday) 2-4pm<br>
 									
 									<br>
@@ -495,20 +498,22 @@
 						</div>
 						
 					
-				<div class="col-md-8 text-left" style="padding-left: 0px;">		 
-
+						 
+<div class="col-md-8 text-left" style="padding-left: 0px;">
 						<h2 class="wow fadeInUp animated cd-headline slide"
 							data-wow-delay=".4s" style="">
 							<span style="font-weight: bold;">Upcoming <b style="opacity: 1;">CADETS</b> Webinars:</span>
 						</h2>
+					</div>
+
 						
-						
+					<div class="col-md-6 text-left" style="padding-left: 0px;">	
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
-									style="color: #515151; font-size: 13px; font-weight: bold;">
+									style="color: #515151; font-size: 15px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">October</font><br> 
 										
-										17th October(Thursday) 2-3pm<br>
+										17th October (Thursday) 2-3pm<br>
 										
 										
 									<br>
@@ -517,13 +522,14 @@
 								</p>
 		
 							</div>
-
+						</div>
+<div class="col-md-6 text-left" style="padding-left: 0px;">
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
-									style="color: #515151; font-size: 13px; font-weight: bold;">
+									style="color: #515151; font-size: 15px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">November</font><br> 
 										
-										15th November(Friday) 2-3pm<br>
+										15th November (Friday) 2-3pm<br>
 										
 										
 									<br>
@@ -532,10 +538,7 @@
 								</p>
 		
 							</div>
-
-							
 						</div>
-						
 					<!--	<h2 class="wow fadeInUp animated cd-headline slide"
 							data-wow-delay=".4s" style="">
 							<span style="font-weight: bold;">Upcoming <b style="opacity: 1;">CADETS</b> Webinars:</span>
