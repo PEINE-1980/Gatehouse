@@ -472,6 +472,24 @@
 							</div>
 						</div>
 
+						<div class="col-md-6 text-left" style="padding-left: 0px;">
+
+							<div class="block wow fadeInUp" data-wow-delay=".3s">
+								<p class="wow fadeInUp animated" data-wow-delay=".6s"
+									style="color: #515151; font-size: 15px; font-weight: bold;">
+									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">December</font><br> 
+										
+										18th December (Wednesday) 2-3.30pm<br>
+										
+										
+									<br>
+		
+	
+								</p>
+		
+							</div>
+						</div>
+
 						
 <div class="col-md-8 text-left" style="padding-left: 0px;">
 						<h2 class="wow fadeInUp animated cd-headline slide"
@@ -486,8 +504,8 @@
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 15px; font-weight: bold;">September</font><br> 
-									26th September (Thursday) 2-4pm<br>
+									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">December</font><br> 
+									11th December (Wednesday) 2-4pm<br>
 									
 									<br>
 		
@@ -507,13 +525,14 @@
 					</div>
 
 						
-					<div class="col-md-6 text-left" style="padding-left: 0px;">	
+					
+<div class="col-md-6 text-left" style="padding-left: 0px;">
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">October</font><br> 
+									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">November</font><br> 
 										
-										17th October (Thursday) 2-3pm<br>
+										15th November (Friday) 2-3pm<br>
 										
 										
 									<br>
@@ -523,13 +542,14 @@
 		
 							</div>
 						</div>
-<div class="col-md-6 text-left" style="padding-left: 0px;">
+
+						<div class="col-md-6 text-left" style="padding-left: 0px;">	
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">November</font><br> 
+									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">December</font><br> 
 										
-										15th November (Friday) 2-3pm<br>
+										13th December (Friday) 2-3pm<br>
 										
 										
 									<br>
