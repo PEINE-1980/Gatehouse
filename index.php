@@ -440,7 +440,7 @@
 
 						
 
-						<div class="col-md-6 text-left" style="padding-left: 0px;">
+						<!--<div class="col-md-6 text-left" style="padding-left: 0px;">
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
@@ -454,7 +454,7 @@
 								</p>
 		
 							</div>
-						</div>
+						</div> -->
 						<div class="col-md-6 text-left" style="padding-left: 0px;">
 
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
@@ -462,7 +462,7 @@
 									style="color: #515151; font-size: 15px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">January</font><br> 
 										
-										16th January (Thursday) 2-3.30pm<br>
+										28th January  (Tuesday) 2.30-4pm<br>
 										
 										
 									<br>
@@ -487,8 +487,8 @@
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">December</font><br> 
-									11th December (Wednesday) 2-4pm<br>
+									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">February</font><br> 
+									11th February (Tuesday) 2-4 pm<br>
 									
 									<br>
 		
@@ -511,7 +511,7 @@
 					
 
 
-						<div class="col-md-6 text-left" style="padding-left: 0px;">	
+						<!-- <div class="col-md-6 text-left" style="padding-left: 0px;">	
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
@@ -526,7 +526,7 @@
 								</p>
 		
 							</div>
-						</div>
+						</div> -->
 
 						<div class="col-md-6 text-left" style="padding-left: 0px;">
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
