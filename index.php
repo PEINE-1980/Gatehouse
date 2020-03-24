@@ -441,15 +441,15 @@
 						
 
 						
-						<div class="col-md-6 text-left" style="padding-left: 0px;">
+						
 
+						<div class="col-md-6 text-left" style="padding-left: 0px;">
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">January</font><br> 
+									<font color="#E6540E" style="font-size: 15px; font-weight: bold;">February</font><br> 
 										
-										28th January  (Tuesday) 2.30-4pm<br>
-										
+										27th February (Thursday) 2-3.30pm<br>
 										
 									<br>
 		
@@ -460,12 +460,14 @@
 						</div>
 
 						<div class="col-md-6 text-left" style="padding-left: 0px;">
+
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 15px; font-weight: bold;">February</font><br> 
+									<font color="#E6540E" style="font-size: 15px; font-weight: bold;">March</font><br> 
 										
-										27th February (Thursday) 2-3.30pm<br>
+										25th March (Wednesday) 2-2.30pm<br>
+										
 										
 									<br>
 		
