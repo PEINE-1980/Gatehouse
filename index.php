@@ -538,9 +538,9 @@
 							<div class="block wow fadeInUp" data-wow-delay=".3s">
 								<p class="wow fadeInUp animated" data-wow-delay=".6s"
 									style="color: #515151; font-size: 15px; font-weight: bold;">
-									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">February</font><br> 
+									<font color="#E6540E" style="font-size: 16px; font-weight: bold;">April</font><br> 
 										
-										13th February (Thursday) 2-3pm<br>
+										20th April (Monday) 2-3pm<br>
 										
 										
 									<br>
