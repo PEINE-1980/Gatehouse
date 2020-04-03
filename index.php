@@ -469,7 +469,7 @@
 									style="color: #515151; font-size: 15px; font-weight: bold;">
 									<font color="#E6540E" style="font-size: 15px; font-weight: bold;">April</font><br> 
 										
-										22nd April (Wednesday) 2-2.30pm<br>
+										22nd April (Wednesday) 2-3.30pm<br>
 										
 									<br>
 		
